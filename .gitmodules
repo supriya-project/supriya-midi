@@ -1,0 +1,6 @@
+[submodule "ext/nanobind"]
+	path = ext/nanobind
+	url = https://github.com/wjakob/nanobind
+[submodule "ext/rtmidi"]
+	path = ext/rtmidi
+	url = https://github.com/thestk/rtmidi.git

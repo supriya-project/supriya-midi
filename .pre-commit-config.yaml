@@ -1,0 +1,23 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
+  hooks:
+  - id: check-yaml
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.15.9
+  hooks:
+  - id: ruff-check
+    name: ruff isort
+    types_or:  [python, pyi]
+    args: [--select, "I,RUF022", --fix]
+  - id: ruff-check
+    types_or:  [python, pyi]
+    args: [--fix]
+  - id: ruff-format
+    types_or: [python, pyi]
+- repo: https://github.com/astral-sh/uv-pre-commit
+  rev: 0.11.3
+  hooks:
+  - id: uv-lock
