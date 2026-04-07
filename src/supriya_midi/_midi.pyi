@@ -5,40 +5,24 @@ from collections.abc import Callable, Sequence
 
 class RtMidiAPI(enum.Enum):
     UNSPECIFIED = 0
-
     MACOSX_CORE = 1
-
     LINUX_ALSA = 2
-
     UNIX_JACK = 3
-
     WINDOWS_MM = 4
-
     WEB_MIDI = 6
-
     RTMIDI_DUMMY = 5
 
 class RtMidiErrorType(enum.Enum):
     WARNING = 0
-
     DEBUG_WARNING = 1
-
     UNSPECIFIED = 2
-
     NO_DEVICES_FOUND = 3
-
     INVALID_DEVICE = 4
-
     MEMORY_ERROR = 5
-
     INVALID_PARAMETER = 6
-
     INVALID_USE = 7
-
     DRIVER_ERROR = 8
-
     SYSTEM_ERROR = 9
-
     THREAD_ERROR = 10
 
 class RtMidi:
