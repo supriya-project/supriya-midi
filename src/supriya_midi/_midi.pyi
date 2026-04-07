@@ -1,0 +1,87 @@
+"""RtMidi bindings"""
+
+import enum
+from collections.abc import Callable, Sequence
+
+class RtMidiAPI(enum.Enum):
+    UNSPECIFIED = 0
+
+    MACOSX_CORE = 1
+
+    LINUX_ALSA = 2
+
+    UNIX_JACK = 3
+
+    WINDOWS_MM = 4
+
+    WEB_MIDI = 6
+
+    RTMIDI_DUMMY = 5
+
+class RtMidiErrorType(enum.Enum):
+    WARNING = 0
+
+    DEBUG_WARNING = 1
+
+    UNSPECIFIED = 2
+
+    NO_DEVICES_FOUND = 3
+
+    INVALID_DEVICE = 4
+
+    MEMORY_ERROR = 5
+
+    INVALID_PARAMETER = 6
+
+    INVALID_USE = 7
+
+    DRIVER_ERROR = 8
+
+    SYSTEM_ERROR = 9
+
+    THREAD_ERROR = 10
+
+class RtMidi:
+    @staticmethod
+    def get_api_display_name(api: RtMidiAPI) -> str: ...
+    @staticmethod
+    def get_api_name(api: RtMidiAPI) -> str: ...
+    @staticmethod
+    def get_compiled_api() -> list[RtMidiAPI]: ...
+    @staticmethod
+    def get_compiled_api_by_name(name: str) -> RtMidiAPI: ...
+    @staticmethod
+    def get_version() -> str: ...
+    def close_port(self) -> None: ...
+    def get_port_count(self) -> int: ...
+    def get_port_name(self, port_number: int = 0) -> str: ...
+    def open_port(self, port_number: int = 0, port_name: str = "RtMidi") -> None: ...
+    def open_virtual_port(self, port_name: str = "RtMidi") -> None: ...
+    def set_client_name(self, client_name: str) -> None: ...
+    def set_error_callback(self, callback: Callable) -> None: ...
+    def set_port_name(self, port_name: str) -> None: ...
+
+class RtMidiIn(RtMidi):
+    def __init__(
+        self,
+        api: RtMidiAPI = RtMidiAPI.UNSPECIFIED,
+        client_name: str = "RtMidi Input Client",
+        queue_size_limit: int = 1024,
+    ) -> None: ...
+    def cancel_callback(self) -> None: ...
+    def get_current_api(self) -> RtMidiAPI: ...
+    def get_message(self) -> tuple[list[int], float]: ...
+    def ignore_types(
+        self, sysex: bool = True, timing: bool = True, active_sense: bool = True
+    ) -> None: ...
+    def set_buffer_size(self, size: int = 1024, count: int = 4) -> None: ...
+    def set_callback(self, arg: Callable, /) -> None: ...
+
+class RtMidiOut(RtMidi):
+    def __init__(
+        self,
+        api: RtMidiAPI = RtMidiAPI.UNSPECIFIED,
+        client_name: str = "RtMidi Output Client",
+    ) -> None: ...
+    def get_current_api(self) -> RtMidiAPI: ...
+    def send_message(self, arg: Sequence[int], /) -> None: ...

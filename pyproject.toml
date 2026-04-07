@@ -1,0 +1,46 @@
+[build-system]
+build-backend = "scikit_build_core.build"
+requires = ["scikit-build-core >= 0.12", "nanobind >= 2.12"]
+
+[project]
+name = "supriya-midi"
+version = "0.1.0"
+description = "Python  RTMidi Bindings"
+readme = "README.md"
+requires-python = ">= 3.10"
+dependencies = [
+    "typing-extensions>=4.15.0",
+]
+
+[dependency-groups]
+dev = [
+    "nanobind >= 2.12.0",
+    "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "ruff>=0.15.7",
+    "ty>=0.0.24",
+]
+
+[tool.scikit-build]
+# build-dir = "build/{wheel_tag}"
+sdist.include = ["ext/"]
+wheel.exclude = ["*.cpp"]
+wheel.packages = ["src/supriya_midi"]
+
+[tool.cibuildwheel]
+test-requires = "pytest"
+test-command = "pytest -v {package}/tests/test_wheels.py"
+
+[tool.cibuildwheel.linux]
+before-all = [
+    "yum install -y alsa-lib-devel alsa-utils jack-audio-connection-kit-devel",
+]
+
+[[tool.cibuildwheel.overrides]]
+select = "*-musllinux*"
+before-all = [
+    "apk add alsa-lib-dev alsa-utils jack-dev",
+]
+
+[tool.cibuildwheel.macos]
+environment = {MACOSX_DEPLOYMENT_TARGET="10.13"}
