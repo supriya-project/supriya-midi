@@ -25,7 +25,7 @@ def get_compiled_api_by_name(name: str) -> RtMidiAPI:
     return RtMidi.get_compiled_api_by_name(name)
 
 
-def get_version() -> str:
+def get_rtmidi_version() -> str:
     return RtMidi.get_version()
 
 

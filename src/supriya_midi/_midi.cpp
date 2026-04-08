@@ -27,7 +27,7 @@ void error_callback_function(RtMidiError::Type type, const std::string &errorTex
 
 NB_MODULE(_midi, m) {
     m.doc() = "RtMidi bindings";
-    nb::enum_<RtMidi::Api>(m, "RtMidiAPI")
+    nb::enum_<RtMidi::Api>(m, "RtMidiAPI", nb::is_arithmetic())
         .value("UNSPECIFIED", RtMidi::UNSPECIFIED)
         .value("MACOSX_CORE", RtMidi::MACOSX_CORE)
         .value("LINUX_ALSA", RtMidi::LINUX_ALSA)

@@ -22,15 +22,9 @@ dev = [
     "ty>=0.0.24",
 ]
 
-[tool.scikit-build]
-# build-dir = "build/{wheel_tag}"
-sdist.include = ["ext/"]
-wheel.exclude = ["*.cpp"]
-wheel.packages = ["src/supriya_midi"]
-
 [tool.cibuildwheel]
 test-requires = "pytest"
-test-command = "pytest -v {package}/tests/test_wheels.py"
+test-command = "pytest -v -m ci {package}/tests/"
 
 [tool.cibuildwheel.linux]
 before-all = [
@@ -45,3 +39,11 @@ before-all = [
 
 [tool.cibuildwheel.macos]
 environment = {MACOSX_DEPLOYMENT_TARGET="10.13"}
+
+[tool.pytest]
+markers = ["ci: mark test for use in cibuildwheel"]
+
+[tool.scikit-build]
+sdist.include = ["ext/"]
+wheel.exclude = ["*.cpp"]
+wheel.packages = ["src/supriya_midi"]
