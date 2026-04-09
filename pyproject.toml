@@ -42,6 +42,7 @@ environment = {MACOSX_DEPLOYMENT_TARGET="10.13"}
 
 [tool.pytest]
 markers = ["ci: mark test for use in cibuildwheel"]
+testpaths = ["tests/"]
 
 [tool.scikit-build]
 sdist.include = ["ext/"]
