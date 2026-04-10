@@ -60,7 +60,8 @@ class MidiBase(Generic[R]):
         self.set_error_callback(_default_error_callback)
 
     def close_port(self) -> None:
-        self._port_number = None
+        if self._port_number != -1:
+            self._port_number = None
         self._rt_midi.close_port()
 
     def delete(self) -> None:
