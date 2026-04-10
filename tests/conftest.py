@@ -16,6 +16,11 @@ TESTED_APIS = [
     ]
 ]
 
+IN_CLIENT_NAME = "RtMidi Test Input"
+OUT_CLIENT_NAME = "RtMidi Test Output"
+IN_PORT_NAME = "testin"
+OUT_PORT_NAME = "testout"
+
 
 @pytest.fixture(params=TESTED_APIS)
 def api(request) -> RtMidiAPI:
@@ -24,7 +29,7 @@ def api(request) -> RtMidiAPI:
 
 @pytest.fixture
 def midi_in(api: RtMidiAPI) -> Generator[MidiIn, None, None]:
-    midi_in = MidiIn(api=api, name="RtMidi Test Input")
+    midi_in = MidiIn(api=api, name=IN_CLIENT_NAME)
     assert midi_in.get_current_api() == api
     yield midi_in
     midi_in.close_port()
@@ -33,24 +38,8 @@ def midi_in(api: RtMidiAPI) -> Generator[MidiIn, None, None]:
 
 @pytest.fixture
 def midi_out(api: RtMidiAPI) -> Generator[MidiOut, None, None]:
-    midi_out = MidiOut(api=api, name="RtMidi Test Output")
+    midi_out = MidiOut(api=api, name=OUT_CLIENT_NAME)
     assert midi_out.get_current_api() == api
     yield midi_out
     midi_out.close_port()
     del midi_out
-
-
-def test_MidiIn_port_number(midi_in: MidiIn) -> None:
-    assert midi_in.port_number is None
-    midi_in.open_port(0)
-    assert midi_in.port_number is not None
-    midi_in.close_port()
-    assert midi_in.port_number is None
-
-
-def test_MidiOut_port_number(midi_out: MidiOut) -> None:
-    assert midi_out.port_number is None
-    midi_out.open_port(0)
-    assert midi_out.port_number is not None
-    midi_out.close_port()
-    assert midi_out.port_number is None

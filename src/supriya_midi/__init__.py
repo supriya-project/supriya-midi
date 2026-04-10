@@ -29,6 +29,16 @@ def get_rtmidi_version() -> str:
     return RtMidi.get_version()
 
 
+def list_ports() -> list[str]:
+    midi_in = RtMidiIn()
+    ports = [
+        midi_in.get_port_name(port_number)
+        for port_number in range(midi_in.get_port_count())
+    ]
+    del midi_in
+    return ports
+
+
 R = TypeVar("R", bound=RtMidi)
 
 
@@ -67,7 +77,7 @@ class MidiBase(Generic[R]):
     def get_port_name(self, port_number: int = 0) -> str:
         return self._rt_midi.get_port_name(port_number)
 
-    def list_ports(self) -> list[str]:
+    def get_ports(self) -> list[str]:
         return [
             self.get_port_name(port_number)
             for port_number in range(self.get_port_count())
