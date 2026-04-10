@@ -182,9 +182,12 @@ class MidiOut(MidiBase[RtMidiOut]):
         return self._rt_midi.get_current_api()
 
     def send_message(self, message: Sequence[int]) -> None:
-        if not message:
+        message_ = tuple(message)
+        if not message_:
             raise ValueError("Message must not be empty.")
-        self._rt_midi.send_message(message)
+        elif len(message_) > 3 and message_[0] != 0xF0:
+            raise ValueError("Messages longer than 3 bytes must start with 0xF0.")
+        self._rt_midi.send_message(message_)
 
 
 __all__ = [
