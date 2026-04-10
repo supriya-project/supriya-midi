@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from supriya_midi import MidiIn, MidiOut, RtMidiAPI
+from supriya_midi import MidiIn, MidiOut, RtMidiAPI, list_ports
 
 from .conftest import OUT_PORT_NAME, TESTED_APIS
 
@@ -28,7 +28,7 @@ def set_up_loopback(midi_in: MidiIn, midi_out: MidiOut) -> None:
     # the port number of the virtual output port, which we have to use,
     # because for ALSA virtual ports, their name includes the client id.
     # See: https://github.com/thestk/rtmidi/issues/88
-    ports_before = midi_in.get_ports()
+    ports_before = list_ports()
     midi_out.open_virtual_port(port_name=OUT_PORT_NAME)
     ports_after = midi_in.get_ports()
     midi_out_port_name = list(set(ports_after).difference(ports_before))[0]

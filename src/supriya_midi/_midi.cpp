@@ -12,15 +12,19 @@ namespace nb = nanobind;
 using namespace nb::literals;
 
 void callback_function(double timeStamp, std::vector<unsigned char> *message, void *userData) {
-    nb::gil_scoped_acquire gil;
-    auto *callback = static_cast<nb::callable*>(userData);
-    (*callback)(message, timeStamp);
+//  {
+//      nb::gil_scoped_acquire gil;
+//      auto *callback = static_cast<nb::callable*>(userData);
+//      (*callback)(message, timeStamp);
+//  }
 }
 
 void error_callback_function(RtMidiError::Type type, const std::string &errorText, void *userData) {
-    nb::gil_scoped_acquire gil;
-    auto *callback = static_cast<nb::callable*>(userData);
-    (*callback)(type, errorText);
+  {
+      nb::gil_scoped_acquire gil;
+      auto *callback = static_cast<nb::callable*>(userData);
+      (*callback)(type, errorText);
+  }
 }
 
 // Module definition

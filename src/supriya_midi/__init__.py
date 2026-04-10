@@ -1,4 +1,5 @@
-from typing import Any, Callable, Generic, Sequence, TypeVar
+from functools import partial
+from typing import Any, Callable, Generic, Iterable, Sequence, TypeVar
 
 from typing_extensions import Self
 
@@ -114,10 +115,10 @@ class MidiBase(Generic[R]):
         self._rt_midi.set_client_name(client_name)
 
     def set_error_callback(
-        self, callback: Callable[[RtMidiErrorType, str], None]
+        self, callback: Callable[[RtMidiErrorType, str], None], data: Any = None
     ) -> None:
-        self._error_callback = callback
-        self._rt_midi.set_error_callback(callback)
+        self._error_callback = partial(callback, data=data)
+        self._rt_midi.set_error_callback(self._error_callback)
 
     def set_port_name(self, port_name: str) -> None:
         if self.get_current_api() in (RtMidiAPI.MACOSX_CORE, RtMidiAPI.WINDOWS_MM):
@@ -165,11 +166,13 @@ class MidiIn(MidiBase[RtMidiIn]):
     def set_buffer_size(self, size: int = 1024, count: int = 4) -> None:
         self._rt_midi.set_buffer_size(size, count)
 
-    def set_callback(self, callback: Callable[[Sequence[int], float], None]) -> None:
+    def set_callback(
+        self, callback: Callable[[Sequence[int], float], None], data: Any = None
+    ) -> None:
         if self._callback:
             self.cancel_callback()
-        self._callback = callback
-        self._rt_midi.set_callback(callback)
+        self._callback = partial(callback, data=data)
+        self._rt_midi.set_callback(self._callback)
 
 
 class MidiOut(MidiBase[RtMidiOut]):
@@ -181,7 +184,7 @@ class MidiOut(MidiBase[RtMidiOut]):
     def get_current_api(self) -> RtMidiAPI:
         return self._rt_midi.get_current_api()
 
-    def send_message(self, message: Sequence[int]) -> None:
+    def send_message(self, message: Iterable[int]) -> None:
         message_ = tuple(message)
         if not message_:
             raise ValueError("Message must not be empty.")

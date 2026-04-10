@@ -13,7 +13,7 @@ def api(request) -> RtMidiAPI:
 
 
 def test_set_client_name(midi_in: MidiIn, midi_out: MidiOut) -> None:
-    midi_out.open_virtual_port(name=OUT_PORT_NAME)
+    midi_out.open_virtual_port(port_name=OUT_PORT_NAME)
     for port in midi_in.get_ports():
         client, port = port.split(":", 1)
         if client.startswith(OUT_CLIENT_NAME) and port.startswith(OUT_PORT_NAME):
