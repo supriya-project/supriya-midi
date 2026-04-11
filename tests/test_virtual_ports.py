@@ -1,4 +1,5 @@
 import time
+from typing import Any, Iterable
 
 import pytest
 
@@ -100,20 +101,21 @@ def test_send_accepts_sysex(midi_in: MidiIn, midi_out: MidiOut) -> None:
 
 
 def test_callback(midi_in: MidiIn, midi_out: MidiOut) -> None:
-    def callback(event, data):
-        messages.append((event[0], data))
+
+    def callback(message: Iterable[int], timestamp: float, data: Any = None) -> None:
+        messages.append((message, data))
+
+    set_up_loopback(midi_in, midi_out)
 
     messages = []
-    set_up_loopback(midi_in, midi_out)
     midi_in.set_callback(callback, data=42)
     midi_out.send_message(NOTE_ON)
     midi_out.send_message(NOTE_OFF)
     time.sleep(DELAY)
-    assert messages[0] == (NOTE_ON, 42)
-    assert messages[1] == (NOTE_OFF, 42)
+    assert messages == [(NOTE_ON, 42), (NOTE_OFF, 42)]
 
-    midi_in.cancel_callback()
     messages = []
+    midi_in.cancel_callback()
     midi_out.send_message(NOTE_ON)
     midi_out.send_message(NOTE_OFF)
     time.sleep(DELAY)

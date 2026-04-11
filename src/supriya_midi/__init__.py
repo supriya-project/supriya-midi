@@ -1,13 +1,15 @@
 from functools import partial
-from typing import Any, Callable, Generic, Iterable, Sequence, TypeVar
+from typing import Any, Callable, Generic, Iterable, Protocol, Sequence, TypeVar
 
 from typing_extensions import Self
 
 from ._midi import RtMidi, RtMidiAPI, RtMidiErrorType, RtMidiIn, RtMidiOut
 
 
-def _default_error_callback(error_type: RtMidiErrorType, message: str) -> None:
-    raise RuntimeError((message, error_type))
+def _default_error_callback(
+    error_type: RtMidiErrorType, error_text: str, data: Any = None
+) -> None:
+    raise RuntimeError((error_type, error_text))
 
 
 def get_api_display_name(api: RtMidiAPI) -> str:
@@ -38,6 +40,18 @@ def list_ports() -> list[str]:
     ]
     del midi_in
     return ports
+
+
+class Callback(Protocol):
+    def __call__(
+        self, message: Iterable[int], timestamp: float, data: Any = None
+    ) -> None: ...
+
+
+class ErrorCallback(Protocol):
+    def __call__(
+        self, error_type: RtMidiErrorType, error_text: str, data: Any = None
+    ) -> None: ...
 
 
 R = TypeVar("R", bound=RtMidi)
@@ -114,9 +128,7 @@ class MidiBase(Generic[R]):
             )
         self._rt_midi.set_client_name(client_name)
 
-    def set_error_callback(
-        self, callback: Callable[[RtMidiErrorType, str], None], data: Any = None
-    ) -> None:
+    def set_error_callback(self, callback: ErrorCallback, data: Any = None) -> None:
         self._error_callback = partial(callback, data=data)
         self._rt_midi.set_error_callback(self._error_callback)
 
@@ -166,12 +178,11 @@ class MidiIn(MidiBase[RtMidiIn]):
     def set_buffer_size(self, size: int = 1024, count: int = 4) -> None:
         self._rt_midi.set_buffer_size(size, count)
 
-    def set_callback(
-        self, callback: Callable[[Sequence[int], float], None], data: Any = None
-    ) -> None:
+    def set_callback(self, callback: Callback, data: Any = None) -> None:
         if self._callback:
             self.cancel_callback()
         self._callback = partial(callback, data=data)
+        # self._callback = callback
         self._rt_midi.set_callback(self._callback)
 
 
