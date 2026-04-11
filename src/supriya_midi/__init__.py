@@ -1,12 +1,15 @@
-from typing import Any, Callable, Generic, Sequence, TypeVar
+from functools import partial
+from typing import Any, Callable, Generic, Iterable, Protocol, Sequence, TypeVar
 
 from typing_extensions import Self
 
 from ._midi import RtMidi, RtMidiAPI, RtMidiErrorType, RtMidiIn, RtMidiOut
 
 
-def _default_error_callback(error_type: RtMidiErrorType, message: str) -> None:
-    raise RuntimeError((message, error_type))
+def _default_error_callback(
+    error_type: RtMidiErrorType, error_text: str, data: Any = None
+) -> None:
+    raise RuntimeError((error_type, error_text))
 
 
 def get_api_display_name(api: RtMidiAPI) -> str:
@@ -25,8 +28,30 @@ def get_compiled_api_by_name(name: str) -> RtMidiAPI:
     return RtMidi.get_compiled_api_by_name(name)
 
 
-def get_version() -> str:
+def get_rtmidi_version() -> str:
     return RtMidi.get_version()
+
+
+def list_ports() -> list[str]:
+    midi_in = RtMidiIn()
+    ports = [
+        midi_in.get_port_name(port_number)
+        for port_number in range(midi_in.get_port_count())
+    ]
+    del midi_in
+    return ports
+
+
+class Callback(Protocol):
+    def __call__(
+        self, message: Iterable[int], timestamp: float, data: Any = None
+    ) -> None: ...
+
+
+class ErrorCallback(Protocol):
+    def __call__(
+        self, error_type: RtMidiErrorType, error_text: str, data: Any = None
+    ) -> None: ...
 
 
 R = TypeVar("R", bound=RtMidi)
@@ -50,7 +75,8 @@ class MidiBase(Generic[R]):
         self.set_error_callback(_default_error_callback)
 
     def close_port(self) -> None:
-        self._port_number = None
+        if self._port_number != -1:
+            self._port_number = None
         self._rt_midi.close_port()
 
     def delete(self) -> None:
@@ -67,7 +93,7 @@ class MidiBase(Generic[R]):
     def get_port_name(self, port_number: int = 0) -> str:
         return self._rt_midi.get_port_name(port_number)
 
-    def list_ports(self) -> list[str]:
+    def get_ports(self) -> list[str]:
         return [
             self.get_port_name(port_number)
             for port_number in range(self.get_port_count())
@@ -102,11 +128,9 @@ class MidiBase(Generic[R]):
             )
         self._rt_midi.set_client_name(client_name)
 
-    def set_error_callback(
-        self, callback: Callable[[RtMidiErrorType, str], None]
-    ) -> None:
-        self._error_callback = callback
-        self._rt_midi.set_error_callback(callback)
+    def set_error_callback(self, callback: ErrorCallback, data: Any = None) -> None:
+        self._error_callback = partial(callback, data=data)
+        self._rt_midi.set_error_callback(self._error_callback)
 
     def set_port_name(self, port_name: str) -> None:
         if self.get_current_api() in (RtMidiAPI.MACOSX_CORE, RtMidiAPI.WINDOWS_MM):
@@ -154,11 +178,12 @@ class MidiIn(MidiBase[RtMidiIn]):
     def set_buffer_size(self, size: int = 1024, count: int = 4) -> None:
         self._rt_midi.set_buffer_size(size, count)
 
-    def set_callback(self, callback: Callable[[Sequence[int], float], None]) -> None:
+    def set_callback(self, callback: Callback, data: Any = None) -> None:
         if self._callback:
             self.cancel_callback()
-        self._callback = callback
-        self._rt_midi.set_callback(callback)
+        self._callback = partial(callback, data=data)
+        # self._callback = callback
+        self._rt_midi.set_callback(self._callback)
 
 
 class MidiOut(MidiBase[RtMidiOut]):
@@ -170,10 +195,13 @@ class MidiOut(MidiBase[RtMidiOut]):
     def get_current_api(self) -> RtMidiAPI:
         return self._rt_midi.get_current_api()
 
-    def send_message(self, message: Sequence[int]) -> None:
-        if not message:
+    def send_message(self, message: Iterable[int]) -> None:
+        message_ = tuple(message)
+        if not message_:
             raise ValueError("Message must not be empty.")
-        self._rt_midi.send_message(message)
+        elif len(message_) > 3 and message_[0] != 0xF0:
+            raise ValueError("Messages longer than 3 bytes must start with 0xF0.")
+        self._rt_midi.send_message(message_)
 
 
 __all__ = [

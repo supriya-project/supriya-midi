@@ -1,3 +1,6 @@
+#include <string>
+#include <vector>
+
 #include <nanobind/nanobind.h>
 #include <nanobind/stl/vector.h>
 #include <nanobind/stl/string.h>
@@ -5,15 +8,13 @@
 
 #include <RtMidi.h>
 
-#include <string>
-#include <vector>
-
 namespace nb = nanobind;
 using namespace nb::literals;
 
 void callback_function(double timeStamp, std::vector<unsigned char> *message, void *userData) {
     nb::gil_scoped_acquire gil;
     auto *callback = static_cast<nb::callable*>(userData);
+    nb::print("WOW!");
     (*callback)(message, timeStamp);
 }
 
@@ -27,7 +28,7 @@ void error_callback_function(RtMidiError::Type type, const std::string &errorTex
 
 NB_MODULE(_midi, m) {
     m.doc() = "RtMidi bindings";
-    nb::enum_<RtMidi::Api>(m, "RtMidiAPI")
+    nb::enum_<RtMidi::Api>(m, "RtMidiAPI", nb::is_arithmetic())
         .value("UNSPECIFIED", RtMidi::UNSPECIFIED)
         .value("MACOSX_CORE", RtMidi::MACOSX_CORE)
         .value("LINUX_ALSA", RtMidi::LINUX_ALSA)

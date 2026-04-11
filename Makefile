@@ -1,11 +1,11 @@
 all: ruff-format stubgen
 
 format:
-	uv run ruff check --select I,RUF022 --fix src/
-	uv run ruff format src/
+	uv run ruff check --select I,RUF022 --fix docs/ src/ tests/
+	uv run ruff format docs/ src/ tests/
 
 lint:
-	uv run ruff check src/
+	uv run ruff check docs/ src/ tests/
 
 pre-commit-autoupdate:
 	uv run pre-commit autoupdate --repo https://github.com/astral-sh/ruff-pre-commit
@@ -19,4 +19,4 @@ stubgen:
 	 uv run python -m nanobind.stubgen --module supriya_midi._midi --marker-file src/supriya_midi/py.typed --output-dir src/supriya_midi
 
 ty:
-	uv run ty check src/
+	uv run ty check src/ tests/

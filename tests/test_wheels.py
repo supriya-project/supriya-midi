@@ -4,6 +4,8 @@ import pytest
 
 from supriya_midi import RtMidiAPI, get_compiled_api
 
+pytestmark = pytest.mark.ci
+
 
 @pytest.mark.skipif(platform.system() != "Linux", reason="Requires Linux")
 def test_linux_supports_alsa():
