@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Any, Callable, Generic, Iterable, Protocol, Sequence, TypeVar
+from typing import Any, Generic, Iterable, Protocol, TypeVar
 
 from typing_extensions import Self
 
@@ -60,7 +60,7 @@ R = TypeVar("R", bound=RtMidi)
 class MidiBase(Generic[R]):
     def __init__(self, rt_midi: R) -> None:
         self._rt_midi = rt_midi
-        self._error_callback: Callable[[RtMidiErrorType, str], None] | None = None
+        self._error_callback: ErrorCallback | None = None
         self._is_deleted: bool = False
         self._port_number: int | None = None
         self.set_error_callback(_default_error_callback)
@@ -158,7 +158,7 @@ class MidiIn(MidiBase[RtMidiIn]):
         queue_size_limit: int = 1024,
     ) -> None:
         super().__init__(RtMidiIn(api, name or "RtMidi Input Client", queue_size_limit))
-        self._callback: Callable[[Sequence[int], float], None] | None = None
+        self._callback: Callback | None = None
 
     def cancel_callback(self) -> None:
         self._rt_midi.cancel_callback()
@@ -182,7 +182,6 @@ class MidiIn(MidiBase[RtMidiIn]):
         if self._callback:
             self.cancel_callback()
         self._callback = partial(callback, data=data)
-        # self._callback = callback
         self._rt_midi.set_callback(self._callback)
 
 
