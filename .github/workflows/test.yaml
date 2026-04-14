@@ -74,6 +74,14 @@ jobs:
     - uses: astral-sh/setup-uv@v7
       with:
         python-version: "3.14"
+    - name: Install packages
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          apt-get update --yes
+          apt-get install --yes libasound2-dev libjack-jackd2-dev
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+        fi
     - name: Install supriya-midi
       run: uv sync
     - name: Test
