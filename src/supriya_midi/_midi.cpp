@@ -11,17 +11,35 @@
 namespace nb = nanobind;
 using namespace nb::literals;
 
+struct CallbackHandle {
+    nb::handle callback;
+    nb::handle data;
+
+    ~CallbackHandle() {
+        ~callback;
+        ~data;
+    }
+};
+
+
 void callback_function(double timeStamp, std::vector<unsigned char> *message, void *userData) {
     nb::gil_scoped_acquire gil;
-    auto *callback = static_cast<nb::callable*>(userData);
-    nb::print("WOW!");
-    (*callback)(message, timeStamp);
+    auto* handle = static_cast<CallbackHandle*>(userData);
+    try {
+        nb::borrow<nb::callable>(handle->callback)(message, timeStamp, nb::borrow(handle->data));
+    } catch (nb::python_error &e) {
+        e.discard_as_unraisable(__func__);
+    }
 }
 
 void error_callback_function(RtMidiError::Type type, const std::string &errorText, void *userData) {
     nb::gil_scoped_acquire gil;
-    auto *callback = static_cast<nb::callable*>(userData);
-    (*callback)(type, errorText);
+    auto* handle = static_cast<CallbackHandle*>(userData);
+    try {
+        nb::borrow<nb::callable>(handle->callback)(type, errorText, nb::borrow(handle->data));
+    } catch (nb::python_error &e) {
+        e.discard_as_unraisable(__func__);
+    }
 }
 
 // Module definition
@@ -62,7 +80,16 @@ NB_MODULE(_midi, m) {
         .def("open_port", &RtMidi::openPort, nb::arg("port_number") = 0, nb::arg("port_name") = "RtMidi")
         .def("open_virtual_port", &RtMidi::openVirtualPort, nb::arg("port_name") = "RtMidi")
         .def("set_client_name", &RtMidi::setClientName, nb::arg("client_name"))
-        .def("set_error_callback", [](RtMidi &self, nb::callable callback) { self.setErrorCallback(&error_callback_function, &callback); }, nb::arg("callback"))
+        .def(
+            "set_error_callback",
+            [](RtMidi &self, nb::callable callback, nb::object data) {
+                auto* handle = new CallbackHandle();
+                handle->callback = nb::handle(callback);
+                handle->data = nb::handle(data);
+                self.setErrorCallback(&error_callback_function, &handle);
+            },
+            nb::arg("callback"), nb::arg("data") = nb::none()
+        )
         .def("set_port_name", &RtMidi::setPortName, nb::arg("port_name"))
         ;
     nb::class_<RtMidiIn, RtMidi>(m, "RtMidiIn")
@@ -72,7 +99,16 @@ NB_MODULE(_midi, m) {
         .def("get_message", [](RtMidiIn &self) { std::vector<unsigned char> message; double timeStamp = self.getMessage(&message); return std::make_tuple(message, timeStamp); })
         .def("ignore_types", &RtMidiIn::ignoreTypes, nb::arg("sysex") = true, nb::arg("timing") = true, nb::arg("active_sense") = true)
         .def("set_buffer_size", &RtMidiIn::setBufferSize, nb::arg("size") = 1024, nb::arg("count") = 4)
-        .def("set_callback", [](RtMidiIn &self, nb::callable callback) { self.setCallback(&callback_function, &callback); });
+        .def(
+            "set_callback",
+            [](RtMidiIn &self, nb::callable callback, nb::object data) {
+                auto* handle = new CallbackHandle();
+                handle->callback = nb::handle(callback);
+                handle->data = nb::handle(data);
+                self.setCallback(&callback_function, handle);
+            },
+            nb::arg("callback"), nb::arg("data") = nb::none()
+        );
         ;
     nb::class_<RtMidiOut, RtMidi>(m, "RtMidiOut")
         .def(nb::init<RtMidi::Api, const std::string&>(), nb::arg("api") = RtMidi::Api::UNSPECIFIED, nb::arg("client_name") = "RtMidi Output Client")

@@ -1,4 +1,3 @@
-from functools import partial
 from typing import Any, Generic, Iterable, Protocol, TypeVar
 
 from typing_extensions import Self
@@ -60,7 +59,7 @@ R = TypeVar("R", bound=RtMidi)
 class MidiBase(Generic[R]):
     def __init__(self, rt_midi: R) -> None:
         self._rt_midi = rt_midi
-        self._error_callback: ErrorCallback | None = None
+        self._error_callback: tuple[ErrorCallback, Any] | None = None
         self._is_deleted: bool = False
         self._port_number: int | None = None
         self.set_error_callback(_default_error_callback)
@@ -129,8 +128,8 @@ class MidiBase(Generic[R]):
         self._rt_midi.set_client_name(client_name)
 
     def set_error_callback(self, callback: ErrorCallback, data: Any = None) -> None:
-        self._error_callback = partial(callback, data=data)
-        self._rt_midi.set_error_callback(self._error_callback)
+        self._error_callback = (callback, data)
+        self._rt_midi.set_error_callback(callback, data)
 
     def set_port_name(self, port_name: str) -> None:
         if self.get_current_api() in (RtMidiAPI.MACOSX_CORE, RtMidiAPI.WINDOWS_MM):
@@ -158,7 +157,7 @@ class MidiIn(MidiBase[RtMidiIn]):
         queue_size_limit: int = 1024,
     ) -> None:
         super().__init__(RtMidiIn(api, name or "RtMidi Input Client", queue_size_limit))
-        self._callback: Callback | None = None
+        self._callback: tuple[Callback, Any] | None = None
 
     def cancel_callback(self) -> None:
         self._rt_midi.cancel_callback()
@@ -181,8 +180,8 @@ class MidiIn(MidiBase[RtMidiIn]):
     def set_callback(self, callback: Callback, data: Any = None) -> None:
         if self._callback:
             self.cancel_callback()
-        self._callback = partial(callback, data=data)
-        self._rt_midi.set_callback(self._callback)
+        self._callback = (callback, data)
+        self._rt_midi.set_callback(callback, data)
 
 
 class MidiOut(MidiBase[RtMidiOut]):
@@ -195,8 +194,7 @@ class MidiOut(MidiBase[RtMidiOut]):
         return self._rt_midi.get_current_api()
 
     def send_message(self, message: Iterable[int]) -> None:
-        message_ = tuple(message)
-        if not message_:
+        if not (message_ := list(message)):
             raise ValueError("Message must not be empty.")
         elif len(message_) > 3 and message_[0] != 0xF0:
             raise ValueError("Messages longer than 3 bytes must start with 0xF0.")

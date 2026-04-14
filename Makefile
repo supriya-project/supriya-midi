@@ -1,4 +1,4 @@
-all: ruff-format stubgen
+all: stubgen format
 
 format:
 	uv run ruff check --select I,RUF022 --fix docs/ src/ tests/
