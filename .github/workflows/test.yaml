@@ -80,7 +80,9 @@ jobs:
           sudo apt-get update --yes
           sudo apt-get install --yes libasound2-dev libjack-jackd2-dev
         fi
-    - name: Install supriya-midi
+    - name: Sync
+      run: uv sync
+    - name: Pip install
       run: uv pip install -e . -v
     - name: Test
       run: uv run pytest -v
