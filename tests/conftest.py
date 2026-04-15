@@ -32,7 +32,8 @@ def midi_in(api: RtMidiAPI) -> Generator[MidiIn, None, None]:
     midi_in = MidiIn(api=api, name=IN_CLIENT_NAME)
     assert midi_in.get_current_api() == api
     yield midi_in
-    midi_in.close_port()
+    if not midi_in.is_deleted:
+        midi_in.close_port()
     del midi_in
 
 
@@ -41,5 +42,6 @@ def midi_out(api: RtMidiAPI) -> Generator[MidiOut, None, None]:
     midi_out = MidiOut(api=api, name=OUT_CLIENT_NAME)
     assert midi_out.get_current_api() == api
     yield midi_out
-    midi_out.close_port()
+    if not midi_out.is_deleted:
+        midi_out.close_port()
     del midi_out
