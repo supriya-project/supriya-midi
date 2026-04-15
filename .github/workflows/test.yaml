@@ -78,8 +78,10 @@ jobs:
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
           sudo apt-get update --yes
+          sudo apt-cache search alsa
           sudo apt-get install --yes libasound2-dev libjack-jackd2-dev
         fi
+      shell: bash
     - name: Sync
       run: uv sync
     - name: Pip install
