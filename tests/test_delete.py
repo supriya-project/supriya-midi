@@ -1,6 +1,13 @@
+import platform
+
+import pytest
+
 from supriya_midi import MidiIn, MidiOut
 
 
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="Virtual ports unsupported on Windows"
+)
 def test_MidiIn_delete(midi_in: MidiIn, midi_out: MidiOut) -> None:
     initial_ports = midi_out.get_ports()
     midi_in.open_virtual_port("My virtual output")
@@ -14,6 +21,9 @@ def test_MidiIn_delete(midi_in: MidiIn, midi_out: MidiOut) -> None:
     assert midi_in.is_deleted  # idempotency
 
 
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="Virtual ports unsupported on Windows"
+)
 def test_MidiOut_delete(midi_in: MidiIn, midi_out: MidiOut) -> None:
     initial_ports = midi_in.get_ports()
     midi_out.open_virtual_port("My virtual output")

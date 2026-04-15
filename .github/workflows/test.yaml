@@ -80,6 +80,7 @@ jobs:
           sudo apt-get update --yes
           sudo apt-cache search alsa
           sudo apt-get install --yes libasound2-dev libjack-jackd2-dev
+          sudo modprobe snd-seq
         fi
       shell: bash
     - name: Sync
