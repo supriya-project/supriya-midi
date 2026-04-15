@@ -1,6 +1,9 @@
+import pytest
+
 from supriya_midi import MidiIn, MidiOut, list_ports
 
 
+@pytest.mark.skipif(len(list_ports()) == 0, reason="No ports to open")
 def test_MidiIn_port_number(midi_in: MidiIn) -> None:
     assert list_ports()
     assert midi_in.port_number is None
@@ -10,6 +13,7 @@ def test_MidiIn_port_number(midi_in: MidiIn) -> None:
     assert midi_in.port_number is None
 
 
+@pytest.mark.skipif(len(list_ports()) == 0, reason="No ports to open")
 def test_MidiOut_port_number(midi_out: MidiOut) -> None:
     assert list_ports()
     assert midi_out.port_number is None
