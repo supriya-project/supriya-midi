@@ -190,6 +190,12 @@ class MidiBase(Generic[R]):
         return self._rt_midi.get_port_count()
 
     def get_port_name(self, port_number: int = 0) -> str:
+        """
+        Get the name of the MIDI input or output port at index ``port_number``.
+
+        Returns:
+            The port name
+        """
         return self._rt_midi.get_port_name(port_number)
 
     def get_ports(self) -> list[str]:
@@ -205,6 +211,12 @@ class MidiBase(Generic[R]):
         ]
 
     def open_port(self, port_number: int = 0, port_name: str = "RtMidi") -> Self:
+        """
+        Open a MIDI input or output port with the given ``port_number``.
+
+        Returns:
+            This MIDI client
+        """
         if self._port_number is not None:
             raise RuntimeError("Port already opened.")
         self._rt_midi.open_port(port_number, port_name)
@@ -212,6 +224,12 @@ class MidiBase(Generic[R]):
         return self
 
     def open_virtual_port(self, port_name: str = "RtMidi") -> Self:
+        """
+        Open a virtual MIDI input or output port.
+
+        Returns:
+            This MIDI client
+        """
         if self.get_current_api() == RtMidiAPI.WINDOWS_MM:
             raise NotImplementedError(
                 "Virtual ports are not supported by the Windows MultiMedia API."
@@ -234,6 +252,16 @@ class MidiBase(Generic[R]):
         self._rt_midi.set_client_name(client_name)
 
     def set_error_callback(self, callback: ErrorCallback, data: Any = None) -> None:
+        """
+        Set (or replace) the current error callback with ``callback``.
+
+        Error callbacks fire when the C++ backend raises errors, e.g. when
+        opening ports that don't exist.
+
+        .. note::
+
+            MIDI clients are instantiated with a default error callback.
+        """
         self._error_callback = (callback, data)
         self._rt_midi.set_error_callback(callback, data)
 
