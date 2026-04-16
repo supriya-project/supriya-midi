@@ -64,6 +64,13 @@ jobs:
         - {os: windows-latest,   arch: AMD64,  build: "cp3{10,11,12,13,14}-*",          dist: windows-amd}
         - {os: windows-latest,   arch: ARM64,  build: "cp3{10,11,12,13,14}-*",          dist: windows-arm}
 
+  # N.B. /dev/snd/seq isn't available on the Ubuntu runner and I haven't
+  # succeeded in spinning up a nested Multipass VM so we'll just test OSX and
+  # Windows.
+  #
+  # See also: https://github.com/Jajcus/python-alsa-midi/blob/main/.github/workflows/ci.yml#L65-L98
+  # but copying the Multipass steps here fails when starting the VM. Can't tell why.
+
   test:
     name: Test
     runs-on: ${{ matrix.os }}
@@ -84,49 +91,3 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-15, windows-latest]
-
-  # See: https://github.com/Jajcus/python-alsa-midi/blob/main/.github/workflows/ci.yml#L65-L98
-  test-on-alsa-kernel:
-    name: Test
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v6
-      with:
-        submodules: recursive
-    - name: Install Multipass
-      run: |
-        sudo snap install multipass --classic
-        sudo snap wait system seed.loaded
-        sleep 10
-        journalctl --unit 'snap.multipass*'
-    - name: Start Multipass VM
-      run: |
-        sudo multipass launch 24.04 -n test-vm
-        sleep 10
-      timeout-minutes: 2
-    - name: Setup VM
-      run: |
-        set -x
-        sudo multipass exec test-vm -- sudo modprobe snd-seq-device
-        sudo multipass exec test-vm -- sudo modprobe snd-seq-dummy
-        sudo multipass exec test-vm -- sudo modprobe snd-rawmidi
-        sudo multipass exec test-vm -- sudo sh -c 'chmod a+rw /dev/snd/*'
-        sudo multipass transfer --recursive $PWD test-vm:/home/ubuntu/code
-        sudo multipass exec test-vm -- sudo apt install -y \
-          alsa-utils \
-          libasound-dev \
-          libjack-jackd2 \
-          python3-dev \
-          python3-pip \
-          python3-venv
-        curl -LsSf https://astral.sh/uv/install.sh | sudo multipass exec test-vm -- sh
-    - name: Stop and delete VM
-      if: '!cancelled()'
-      run: |
-        sudo multipass stop test-vm
-        sudo multipass delete test-vm
-        sudo multipass purge
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
