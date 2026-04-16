@@ -3,26 +3,42 @@
 import enum
 from collections.abc import Callable, Sequence
 
-class RtMidiAPI(enum.Enum):
+class RtMidiAPI(enum.IntEnum):
     UNSPECIFIED = 0
+
     MACOSX_CORE = 1
+
     LINUX_ALSA = 2
+
     UNIX_JACK = 3
+
     WINDOWS_MM = 4
+
     WEB_MIDI = 6
+
     RTMIDI_DUMMY = 5
 
 class RtMidiErrorType(enum.Enum):
     WARNING = 0
+
     DEBUG_WARNING = 1
+
     UNSPECIFIED = 2
+
     NO_DEVICES_FOUND = 3
+
     INVALID_DEVICE = 4
+
     MEMORY_ERROR = 5
+
     INVALID_PARAMETER = 6
+
     INVALID_USE = 7
+
     DRIVER_ERROR = 8
+
     SYSTEM_ERROR = 9
+
     THREAD_ERROR = 10
 
 class RtMidi:
@@ -42,7 +58,9 @@ class RtMidi:
     def open_port(self, port_number: int = 0, port_name: str = "RtMidi") -> None: ...
     def open_virtual_port(self, port_name: str = "RtMidi") -> None: ...
     def set_client_name(self, client_name: str) -> None: ...
-    def set_error_callback(self, callback: Callable) -> None: ...
+    def set_error_callback(
+        self, callback: Callable, data: object | None = None
+    ) -> None: ...
     def set_port_name(self, port_name: str) -> None: ...
 
 class RtMidiIn(RtMidi):
@@ -59,7 +77,7 @@ class RtMidiIn(RtMidi):
         self, sysex: bool = True, timing: bool = True, active_sense: bool = True
     ) -> None: ...
     def set_buffer_size(self, size: int = 1024, count: int = 4) -> None: ...
-    def set_callback(self, arg: Callable, /) -> None: ...
+    def set_callback(self, callback: Callable, data: object | None = None) -> None: ...
 
 class RtMidiOut(RtMidi):
     def __init__(
@@ -68,4 +86,4 @@ class RtMidiOut(RtMidi):
         client_name: str = "RtMidi Output Client",
     ) -> None: ...
     def get_current_api(self) -> RtMidiAPI: ...
-    def send_message(self, arg: Sequence[int], /) -> None: ...
+    def send_message(self, message: Sequence[int]) -> None: ...

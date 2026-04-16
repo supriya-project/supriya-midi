@@ -15,6 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -25,7 +26,7 @@ jobs:
     - uses: astral-sh/setup-uv@v7
       with:
         python-version: "3.14"
-    - name: Install supriya-shm
+    - name: Install supriya-midi
       run: uv sync
     - name: Format check
       run: uv run ruff format --check src/ tests/
@@ -33,6 +34,48 @@ jobs:
       run: uv run ruff check src/ tests/
     - name: Type check
       run: uv run ty check src/ tests/
+
+  # N.B. /dev/snd/seq isn't available on the Ubuntu runner and I haven't
+  # succeeded in spinning up a nested Multipass VM so we'll just test OSX and
+  # Windows.
+  #
+  # See also: https://github.com/Jajcus/python-alsa-midi/blob/main/.github/workflows/ci.yml#L65-L98
+  # but copying the Multipass steps here fails when starting the VM. Can't tell why.
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        submodules: recursive
+    - uses: astral-sh/setup-uv@v7
+      with:
+        python-version: "3.14"
+    - name: Sync
+      run: uv sync
+    - name: Pip install
+      run: uv pip install -e . -v
+    - name: Test
+      run: uv run pytest -v
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, windows-latest]
+
+  docs:
+    name: Build docs
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        submodules: recursive
+    - uses: astral-sh/setup-uv@v7
+      with:
+        python-version: "3.14"
+    - name: Sync
+      run: uv sync
+    - name: Build docs
+      run: uv run make -C docs html
 
   package:
     name: Build wheels
