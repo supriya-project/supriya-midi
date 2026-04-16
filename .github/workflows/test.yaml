@@ -85,6 +85,7 @@ jobs:
       matrix:
         os: [macos-15, windows-latest]
 
+  # See: https://github.com/Jajcus/python-alsa-midi/blob/main/.github/workflows/ci.yml#L65-L98
   test-on-alsa-kernel:
     name: Test
     runs-on: ubuntu-latest
@@ -117,3 +118,9 @@ jobs:
           python3-pip \
           python3-venv
         curl -LsSf https://astral.sh/uv/install.sh | sudo multipass exec test-vm -- sh
+    - name: Stop and delete VM
+      if: '!cancelled()'
+      run: |
+        sudo multipass stop test-vm
+        sudo multipass delete test-vm
+        sudo multipass purge
