@@ -1,4 +1,5 @@
 import os
+import platform
 from typing import Any
 from unittest import mock
 
@@ -24,7 +25,7 @@ def test_MidiIn_set_error_callback(midi_in: MidiIn, data: Any) -> None:
     midi_in.open_port(midi_in.get_port_count() + 1)
     expected_error_type = (
         RtMidiErrorType.NO_DEVICES_FOUND
-        if os.environ.get("CI")
+        if os.environ.get("CI") and platform.system() == "Darwin"
         else RtMidiErrorType.INVALID_PARAMETER
     )
     assert error_callback.mock_calls == [
@@ -43,7 +44,7 @@ def test_MidiOut_set_error_callback(midi_out: MidiOut, data: Any) -> None:
     midi_out.open_port(midi_out.get_port_count() + 1)
     expected_error_type = (
         RtMidiErrorType.NO_DEVICES_FOUND
-        if os.environ.get("CI")
+        if os.environ.get("CI") and platform.system() == "Darwin"
         else RtMidiErrorType.INVALID_PARAMETER
     )
     assert error_callback.mock_calls == [
