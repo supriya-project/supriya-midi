@@ -88,12 +88,12 @@ jobs:
   # See: https://github.com/Jajcus/python-alsa-midi/blob/main/.github/workflows/ci.yml#L65-L98
   test-on-alsa-kernel:
     name: Test
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v6
       with:
         submodules: recursive
-    - name: Install multipass
+    - name: Install Multipass
       run: |
         sudo snap install multipass --classic
         sudo snap wait system seed.loaded
@@ -102,6 +102,7 @@ jobs:
       run: |
         sudo multipass launch 24.04 -n test-vm
         sleep 10
+      timeout-minutes: 2
     - name: Setup VM
       run: |
         set -x
@@ -124,3 +125,7 @@ jobs:
         sudo multipass stop test-vm
         sudo multipass delete test-vm
         sudo multipass purge
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
