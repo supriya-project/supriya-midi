@@ -97,7 +97,8 @@ jobs:
       run: |
         sudo snap install multipass --classic
         sudo snap wait system seed.loaded
-        sleep 5
+        sleep 10
+        journalctl --unit 'snap.multipass*'
     - name: Start Multipass VM
       run: |
         sudo multipass launch 24.04 -n test-vm
