@@ -35,11 +35,7 @@ void callback_function(double timeStamp, std::vector<unsigned char> *message, vo
 void error_callback_function(RtMidiError::Type type, const std::string &errorText, void *userData) {
     nb::gil_scoped_acquire gil;
     auto* handle = static_cast<CallbackHandle*>(userData);
-    try {
-        nb::borrow<nb::callable>(handle->callback)(type, errorText, nb::borrow(handle->data));
-    } catch (nb::python_error &e) {
-        e.discard_as_unraisable(__func__);
-    }
+    nb::borrow<nb::callable>(handle->callback)(type, errorText, nb::borrow(handle->data));
 }
 
 // Module definition
@@ -86,7 +82,7 @@ NB_MODULE(_midi, m) {
                 auto* handle = new CallbackHandle();
                 handle->callback = nb::handle(callback);
                 handle->data = nb::handle(data);
-                self.setErrorCallback(&error_callback_function, &handle);
+                self.setErrorCallback(&error_callback_function, handle);
             },
             nb::arg("callback"), nb::arg("data") = nb::none()
         )
