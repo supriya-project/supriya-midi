@@ -25,7 +25,7 @@ def test_MidiIn_set_error_callback(midi_in: MidiIn, data: Any) -> None:
     midi_in.open_port(midi_in.get_port_count() + 1)
     expected_error_type = (
         RtMidiErrorType.NO_DEVICES_FOUND
-        if os.environ.get("CI") and platform.system() == "Darwin"
+        if os.environ.get("CI")
         else RtMidiErrorType.INVALID_PARAMETER
     )
     assert error_callback.mock_calls == [
