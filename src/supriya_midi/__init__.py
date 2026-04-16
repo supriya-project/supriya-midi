@@ -1,8 +1,16 @@
-from typing import Any, Generic, Iterable, Protocol, TypeVar
+"""
+Python bindings for the RtMidi C++ library using nanobind, inspired by
+python-rtmidi.
+"""
+
+from typing import Any, Callable, Generic, Iterable, TypeAlias, TypeVar
 
 from typing_extensions import Self
 
 from ._midi import RtMidi, RtMidiAPI, RtMidiErrorType, RtMidiIn, RtMidiOut
+
+Callback: TypeAlias = Callable[[Iterable[int], float, Any], None]
+ErrorCallback: TypeAlias = Callable[[RtMidiErrorType, str, Any], None]
 
 
 def _default_error_callback(
@@ -12,26 +20,68 @@ def _default_error_callback(
 
 
 def get_api_display_name(api: RtMidiAPI) -> str:
+    """
+    Get the display name of an API.
+
+    Args:
+        api: The API to describe
+
+    Returns:
+        The display name of the API
+    """
     return RtMidi.get_api_display_name(api)
 
 
 def get_api_name(api: RtMidiAPI) -> str:
+    """
+    Get the name of an API.
+
+    Args:
+        api: The API to describe
+
+    Returns:
+        The name of the API
+    """
     return RtMidi.get_api_name(api)
 
 
 def get_compiled_api() -> list[RtMidiAPI]:
+    """
+    Get the backend APIs supported by this module.
+
+    Returns:
+        A list of supported APIs
+    """
     return RtMidi.get_compiled_api()
 
 
 def get_compiled_api_by_name(name: str) -> RtMidiAPI:
+    """
+    Get a supported backend API by case-insensitive name match.
+
+    Returns:
+        The matching API or UNSPECIFIED
+    """
     return RtMidi.get_compiled_api_by_name(name)
 
 
 def get_rtmidi_version() -> str:
+    """
+    Get the version of RtMidi compiled with this library.
+
+    Returns:
+        The RtMidi version string
+    """
     return RtMidi.get_version()
 
 
 def list_ports() -> list[str]:
+    """
+    Get a list of available port names.
+
+    Returns:
+        A list of available port names
+    """
     midi_in = RtMidiIn()
     ports = [
         midi_in.get_port_name(port_number)
@@ -41,22 +91,14 @@ def list_ports() -> list[str]:
     return ports
 
 
-class Callback(Protocol):
-    def __call__(
-        self, message: Iterable[int], timestamp: float, data: Any = None
-    ) -> None: ...
-
-
-class ErrorCallback(Protocol):
-    def __call__(
-        self, error_type: RtMidiErrorType, error_text: str, data: Any = None
-    ) -> None: ...
-
-
 R = TypeVar("R", bound=RtMidi)
 
 
 class MidiBase(Generic[R]):
+    """
+    Base class for MIDI inputs and outputs.
+    """
+
     def __init__(self, rt_midi: R) -> None:
         self._rt_midi = rt_midi
         self._error_callback: tuple[ErrorCallback, Any] | None = None
@@ -150,6 +192,10 @@ class MidiBase(Generic[R]):
 
 
 class MidiIn(MidiBase[RtMidiIn]):
+    """
+    A MIDI input.
+    """
+
     def __init__(
         self,
         api: RtMidiAPI = RtMidiAPI.UNSPECIFIED,
@@ -185,6 +231,10 @@ class MidiIn(MidiBase[RtMidiIn]):
 
 
 class MidiOut(MidiBase[RtMidiOut]):
+    """
+    A MIDI output.
+    """
+
     def __init__(
         self, api: RtMidiAPI = RtMidiAPI.UNSPECIFIED, name: str | None = None
     ) -> None:
@@ -209,7 +259,7 @@ __all__ = [
     "RtMidiErrorType",
     "get_api_display_name",
     "get_api_name",
-    "get_compiled_api",
-    "get_compiled_api_by_name",
+    "get_compiled_apis",
+    "get_compiled_apis_by_name",
     "get_version",
 ]
