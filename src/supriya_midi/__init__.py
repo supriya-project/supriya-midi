@@ -21,26 +21,26 @@ def _default_error_callback(
 
 def get_api_display_name(api: RtMidiAPI) -> str:
     """
-    Get the display name of an API.
+    Get the display name of a backend API.
 
     Args:
-        api: The API to describe
+        api: The backend API to describe
 
     Returns:
-        The display name of the API
+        The display name of the backend API
     """
     return RtMidi.get_api_display_name(api)
 
 
 def get_api_name(api: RtMidiAPI) -> str:
     """
-    Get the name of an API.
+    Get the name of a backend API.
 
     Args:
-        api: The API to describe
+        api: The backend API to describe
 
     Returns:
-        The name of the API
+        The name of the backend API
     """
     return RtMidi.get_api_name(api)
 
@@ -50,7 +50,7 @@ def get_compiled_api() -> list[RtMidiAPI]:
     Get the backend APIs supported by this module.
 
     Returns:
-        A list of supported APIs
+        A list of supported backend APIs
     """
     return RtMidi.get_compiled_api()
 
@@ -60,7 +60,7 @@ def get_compiled_api_by_name(name: str) -> RtMidiAPI:
     Get a supported backend API by case-insensitive name match.
 
     Returns:
-        The matching API or UNSPECIFIED
+        The matching backend API or UNSPECIFIED
     """
     return RtMidi.get_compiled_api_by_name(name)
 
@@ -77,7 +77,7 @@ def get_rtmidi_version() -> str:
 
 def list_ports() -> list[str]:
     """
-    Get a list of available port names.
+    Get a list of available MIDI input or output port names.
 
     Returns:
         A list of available port names
@@ -96,7 +96,7 @@ R = TypeVar("R", bound=RtMidi)
 
 class MidiBase(Generic[R]):
     """
-    Base class for MIDI inputs and outputs.
+    Base class for MIDI input and output clients.
     """
 
     def __init__(self, rt_midi: R) -> None:
@@ -107,34 +107,98 @@ class MidiBase(Generic[R]):
         self.set_error_callback(_default_error_callback)
 
     def __enter__(self) -> Self:
+        """
+        Support the context manager protocol.
+
+        ::
+
+            >>> from supriya_midi import MidiOut
+            >>>
+            >>> with MidiOut().open_port(0) as midi_out:
+            ...     midi_out.send_message([0x90, 48, 100])
+            ...
+
+        Returns:
+            This MIDI client instance.
+        """
         return self
 
     def __exit__(self, *exc_info: Any) -> None:
+        """
+        Support the context manager protocol.
+
+        Closes any open port on exit.
+        """
         self.close_port()
 
     def cancel_error_callback(self) -> None:
+        """
+        Cancel the current error callback function and replace it with the
+        default error callback.
+        """
         self.set_error_callback(_default_error_callback)
 
     def close_port(self) -> None:
+        """
+        Close any MIDI port opened via ``open_port``.
+
+        .. note::
+
+            If a virtual port was opened, the MIDI client instance must be
+            deleted to close it.
+        """
         if self._port_number != -1:
             self._port_number = None
         self._rt_midi.close_port()
 
     def delete(self) -> None:
+        """
+        Immediately delete this client's C++ backend.
+
+        When deleting the client (or simply losing a reference to it), Python's
+        garbage collector may delay deleting the underlying C++ backend for an
+        arbitrary amount of time. Manually deleting ensures the backend is
+        freed exactly when you desire it to be freed. This can be especially
+        useful when virtual ports have been opened, as they can only be closed
+        by deleting the backend.
+
+        .. warning::
+
+           The client must not be used once deleted for risk of segmentation
+           fault.
+        """
         if not self._is_deleted:
             del self._rt_midi
             self._is_deleted = True
 
     def get_current_api(self) -> RtMidiAPI:
+        """
+        Get the backend API used by this client.
+
+        Returns:
+            The backend API
+        """
         raise NotImplementedError
 
     def get_port_count(self) -> int:
+        """
+        Get the number of available MIDI input or output ports.
+
+        Returns:
+            The port count
+        """
         return self._rt_midi.get_port_count()
 
     def get_port_name(self, port_number: int = 0) -> str:
         return self._rt_midi.get_port_name(port_number)
 
     def get_ports(self) -> list[str]:
+        """
+        Get a list of available MIDI input or output port names.
+
+        Returns:
+            A list of available port names
+        """
         return [
             self.get_port_name(port_number)
             for port_number in range(self.get_port_count())
@@ -184,10 +248,24 @@ class MidiBase(Generic[R]):
 
     @property
     def is_deleted(self) -> bool:
+        """
+        True if the client's backend has been deleted.
+        """
         return self._is_deleted
 
     @property
+    def is_port_open(self) -> bool:
+        """
+        True if the client's has a real or virtual port open.
+        """
+        return self._port_number is not None
+
+    @property
     def port_number(self) -> int | None:
+        """
+        The client's current port number (or ``-1`` if a virtual port is open)
+        otherwise ``None``.
+        """
         return self._port_number
 
 
