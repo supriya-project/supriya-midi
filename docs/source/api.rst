@@ -8,6 +8,9 @@ API
    :show-inheritance:
    :undoc-members:
 
+   .. automethod:: __enter__
+   .. automethod:: __exit__
+
 .. autoclass:: supriya_midi.MidiIn
    :members:
    :show-inheritance:

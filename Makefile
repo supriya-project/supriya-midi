@@ -1,4 +1,9 @@
+.PHONY: docs
+
 all: stubgen format
+
+docs:
+	uv run make -C docs/ html
 
 format:
 	uv run ruff check --select I,RUF022 --fix docs/ src/ tests/

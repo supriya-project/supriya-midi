@@ -59,6 +59,9 @@ def get_compiled_api_by_name(name: str) -> RtMidiAPI:
     """
     Get a supported backend API by case-insensitive name match.
 
+    Args:
+        name: The backend API name
+
     Returns:
         The matching backend API or UNSPECIFIED
     """
@@ -193,6 +196,9 @@ class MidiBase(Generic[R]):
         """
         Get the name of the MIDI input or output port at index ``port_number``.
 
+        Args:
+            port_number: The index of the port to describe
+
         Returns:
             The port name
         """
@@ -214,8 +220,13 @@ class MidiBase(Generic[R]):
         """
         Open a MIDI input or output port with the given ``port_number``.
 
+        Args:
+            port_number: The port number to open
+            port_name: An optional port name to apply when opening a port for
+                the first time
+
         Returns:
-            This MIDI client
+            This MIDI client, to facilitate chaining when entering a context
         """
         if self._port_number is not None:
             raise RuntimeError("Port already opened.")
@@ -227,8 +238,17 @@ class MidiBase(Generic[R]):
         """
         Open a virtual MIDI input or output port.
 
+
+        .. note::
+
+            Not supported by the Windows backend API.
+
+        Args:
+            port_name: An optional port name to apply when opening a port for
+                the first time
+
         Returns:
-            This MIDI client
+            This MIDI client, to facilitate chaining when entering a context
         """
         if self.get_current_api() == RtMidiAPI.WINDOWS_MM:
             raise NotImplementedError(
@@ -241,6 +261,16 @@ class MidiBase(Generic[R]):
         return self
 
     def set_client_name(self, client_name: str) -> None:
+        """
+        Set the MIDI client name.
+
+        .. note::
+
+            Only supported by the ALSA backend API.
+
+        Args:
+            client_name: The client name
+        """
         if self.get_current_api() in (
             RtMidiAPI.MACOSX_CORE,
             RtMidiAPI.UNIX_JACK,
@@ -253,19 +283,39 @@ class MidiBase(Generic[R]):
 
     def set_error_callback(self, callback: ErrorCallback, data: Any = None) -> None:
         """
-        Set (or replace) the current error callback with ``callback``.
+        Register a callback callable for backend API errors.
 
         Error callbacks fire when the C++ backend raises errors, e.g. when
-        opening ports that don't exist.
+        opening ports that don't exist. Error callbacks may raise errors.
 
         .. note::
 
             MIDI clients are instantiated with a default error callback.
+
+        .. note::
+
+            Only one callback may be registered at a time. Registering a new
+            callback replaces any previously registered callback.
+
+        Args:
+            callback: The error callback callable
+            data: Optional additional data to pass as the third argument to the
+                callback when invoked
         """
         self._error_callback = (callback, data)
         self._rt_midi.set_error_callback(callback, data)
 
     def set_port_name(self, port_name: str) -> None:
+        """
+        Set the name of the currently opened port.
+
+        .. note::
+
+            Only supported by the ALSA and Jack backend APIs.
+
+        Args:
+            port_name: The port name
+        """
         if self.get_current_api() in (RtMidiAPI.MACOSX_CORE, RtMidiAPI.WINDOWS_MM):
             raise NotImplementedError(
                 "API backend does not support changing the port name."
@@ -299,37 +349,87 @@ class MidiBase(Generic[R]):
 
 class MidiIn(MidiBase[RtMidiIn]):
     """
-    A MIDI input.
+    A MIDI input client.
+
+    Args:
+        api: The backend API to use, if specified, otherwise the first compiled
+            backend API
+        client_name: The client name
+        queue_size_limit: The size of the internal ring buffer used with
+            ``get_message`` when no callback has been set
     """
 
     def __init__(
         self,
         api: RtMidiAPI = RtMidiAPI.UNSPECIFIED,
-        name: str | None = None,
+        client_name: str = "RtMidi Input Client",
         queue_size_limit: int = 1024,
     ) -> None:
-        super().__init__(RtMidiIn(api, name or "RtMidi Input Client", queue_size_limit))
+        super().__init__(RtMidiIn(api, client_name, queue_size_limit))
         self._callback: tuple[Callback, Any] | None = None
 
     def cancel_callback(self) -> None:
+        """
+        ...
+        """
         self._rt_midi.cancel_callback()
         self._callback = None
 
     def get_current_api(self) -> RtMidiAPI:
+        """
+        Get the backend API used by this client.
+
+        Returns:
+            The backend API
+        """
         return self._rt_midi.get_current_api()
 
     def get_message(self) -> tuple[list[int], float]:
+        """
+        ...
+
+        Returns:
+            Pair of the MIDI message and delta timestamp
+        """
         return self._rt_midi.get_message()
 
     def ignore_types(
         self, sysex: bool = True, timing: bool = True, active_sense: bool = True
     ) -> None:
+        """
+        ...
+
+        Args:
+            sysex: ...
+            timing: ...
+            active_sense: ...
+        """
         self._rt_midi.ignore_types(sysex, timing, active_sense)
 
     def set_buffer_size(self, size: int = 1024, count: int = 4) -> None:
+        """
+        ...
+
+        Args:
+            size: ...
+            count: ...
+        """
         self._rt_midi.set_buffer_size(size, count)
 
     def set_callback(self, callback: Callback, data: Any = None) -> None:
+        """
+        Register a callback callable for MIDI messages.
+
+        .. note::
+
+            Only one callback may be registered at a time. Registering a new
+            callback replaces any previously registered callback.
+
+        Args:
+            callback: The MIDI message callback callable
+            data: Optional additional data to pass as the third argument to the
+                callback when invoked
+        """
         if self._callback:
             self.cancel_callback()
         self._callback = (callback, data)
@@ -338,18 +438,41 @@ class MidiIn(MidiBase[RtMidiIn]):
 
 class MidiOut(MidiBase[RtMidiOut]):
     """
-    A MIDI output.
+    A MIDI output client.
+
+    Args:
+        api: The backend API to use, if specified, otherwise the first compiled
+            backend API
+        client_name: The client name
     """
 
     def __init__(
-        self, api: RtMidiAPI = RtMidiAPI.UNSPECIFIED, name: str | None = None
+        self,
+        api: RtMidiAPI = RtMidiAPI.UNSPECIFIED,
+        client_name: str = "RtMidi Output Client",
     ) -> None:
-        super().__init__(RtMidiOut(api, name or "RtMidi Output Client"))
+        super().__init__(RtMidiOut(api, client_name))
 
     def get_current_api(self) -> RtMidiAPI:
+        """
+        Get the backend API used by this client.
+
+        Returns:
+            The backend API
+        """
         return self._rt_midi.get_current_api()
 
     def send_message(self, message: Iterable[int]) -> None:
+        """
+        Send a MIDI message to the client's output port.
+
+        No validation is performed on the message except that if its longer
+        than 3 byes (the standard MIDI message length), the first byte must be
+        a start-of-sysex status byte, 0xF0.
+
+        Args:
+            message: The MIDI message to send
+        """
         if not (message_ := list(message)):
             raise ValueError("Message must not be empty.")
         elif len(message_) > 3 and message_[0] != 0xF0:
