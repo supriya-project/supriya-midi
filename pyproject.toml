@@ -14,6 +14,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "docformatter>=1.7.7",
     "nanobind >= 2.12.0",
     "pre-commit>=4.5.1",
     "pytest>=9.0.2",
@@ -39,6 +40,12 @@ before-all = [
 
 [tool.cibuildwheel.macos]
 environment = {MACOSX_DEPLOYMENT_TARGET="10.13"}
+
+[tool.docformatter]
+black = true
+close-quotes-on-newline = true
+make-summary-multi-line = true
+pre-summary-newline = true
 
 [tool.pytest]
 markers = ["ci: mark test for use in cibuildwheel"]

@@ -1,6 +1,5 @@
 """
-Python bindings for the RtMidi C++ library using nanobind, inspired by
-python-rtmidi.
+Python bindings for the RtMidi C++ library using nanobind, inspired by python-rtmidi.
 """
 
 from typing import Any, Callable, Generic, Iterable, TypeAlias, TypeVar
@@ -136,8 +135,8 @@ class MidiBase(Generic[R]):
 
     def cancel_error_callback(self) -> None:
         """
-        Cancel the current error callback function and replace it with the
-        default error callback.
+        Cancel the current error callback function and replace it with the default error
+        callback.
         """
         self.set_error_callback(_default_error_callback)
 
@@ -237,7 +236,6 @@ class MidiBase(Generic[R]):
     def open_virtual_port(self, port_name: str = "RtMidi") -> Self:
         """
         Open a virtual MIDI input or output port.
-
 
         .. note::
 
@@ -341,8 +339,8 @@ class MidiBase(Generic[R]):
     @property
     def port_number(self) -> int | None:
         """
-        The client's current port number (or ``-1`` if a virtual port is open)
-        otherwise ``None``.
+        The client's current port number (or ``-1`` if a virtual port is open) otherwise
+        ``None``.
         """
         return self._port_number
 

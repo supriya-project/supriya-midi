@@ -8,6 +8,7 @@ docs:
 format:
 	uv run ruff check --select I,RUF022 --fix docs/ src/ tests/
 	uv run ruff format docs/ src/ tests/
+	uv run docformatter --in-place src/supriya_midi/__init__.py
 
 lint:
 	uv run ruff check docs/ src/ tests/
