@@ -8,7 +8,6 @@
 
 project = "supriya-midi"
 copyright = "2026-, Josephine Wolf Oberholtzer"
-author = "Josephine Wolf Oberholtzer"
 author = "Joséphine Wolf Oberholtzer"
 
 # -- General configuration ---------------------------------------------------
@@ -67,6 +66,7 @@ html_theme_options = {
     "site_url": "https://supriya-project.github.io/supriya-midi/",
     "version_dropdown": False,
 }
+html_title = "Supriya MIDI"
 object_description_options = [
     ("py:.*", dict(include_fields_in_toc=False)),  # Hide "Parameters" in TOC
     ("py:parameter", dict(include_in_toc=False)),  # Hide "p" parameter entries in TOC
