@@ -368,7 +368,7 @@ class MidiIn(MidiBase[RtMidiIn]):
 
     def cancel_callback(self) -> None:
         """
-        ...
+        Remove any registered MIDI message callback.
         """
         self._rt_midi.cancel_callback()
         self._callback = None
@@ -384,10 +384,11 @@ class MidiIn(MidiBase[RtMidiIn]):
 
     def get_message(self) -> tuple[list[int], float]:
         """
-        ...
+        Poll for MIDI messages.
 
         Returns:
-            Pair of the MIDI message and delta timestamp
+            Pair of the MIDI message and delta timestamp, or ``None`` if no
+            message available
         """
         return self._rt_midi.get_message()
 
@@ -395,22 +396,27 @@ class MidiIn(MidiBase[RtMidiIn]):
         self, sysex: bool = True, timing: bool = True, active_sense: bool = True
     ) -> None:
         """
-        ...
+        Enable or disable filtering of specific types of MIDI messages.
+
+        System Exclusive (sysex), MIDI clock (timing) and Active Sensing
+        messages are ignored by default because they can quickly fill up input
+        buffers. To enable receiving them, set their corresponding flags to
+        ``False``.
 
         Args:
-            sysex: ...
-            timing: ...
-            active_sense: ...
+            sysex: Enable or disable ignoring System Exclusive messages
+            timing: Enable or disable ignoring MIDI clock messages
+            active_sense: Enable or disable ignoring Active Sensing messages
         """
         self._rt_midi.ignore_types(sysex, timing, active_sense)
 
     def set_buffer_size(self, size: int = 1024, count: int = 4) -> None:
         """
-        ...
+        Set the size and count of the MIDI input buffer(s).
 
         Args:
-            size: ...
-            count: ...
+            size: The size of the input buffer(s)
+            count: The number of ring buffer(s)
         """
         self._rt_midi.set_buffer_size(size, count)
 
