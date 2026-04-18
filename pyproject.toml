@@ -4,7 +4,7 @@ requires = ["scikit-build-core >= 0.12", "nanobind >= 2.12"]
 
 [project]
 name = "supriya-midi"
-version = "0.1.0"
+version = "26.4b0"
 description = "Python  RTMidi Bindings"
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -14,8 +14,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "docformatter>=1.7.7",
-    "nanobind >= 2.12.0",
+    "nanobind>=2.12.0",
     "pre-commit>=4.5.1",
     "pytest>=9.0.2",
     "ruff>=0.15.7",
