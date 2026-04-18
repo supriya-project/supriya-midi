@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 
 
-def calculate_new_version_info(old_version_name: str) -> tuple[int, int, int]:
+def calculate_new_version_info(old_version_name: str | None) -> tuple[int, int, int]:
     now = datetime.datetime.now(datetime.UTC)
     new_year, new_month, new_beta = int(str(now.year)[2:]), now.month, 0
     if old_version_name:
@@ -43,7 +43,9 @@ def build_parser():
 def run():
     parser = build_parser()
     parsed_args = parser.parse_args()
-    year, month, beta = calculate_new_version_info(parsed_args.release)
+    if (old_version_name := parsed_args.release) == "null":
+        old_version_name = None
+    year, month, beta = calculate_new_version_info(old_version_name)
     update_pyproject_toml(year, month, beta)
     rewrite_version_file(year, month, beta)
     print(f"{year}.{month}b{beta}", end="")
