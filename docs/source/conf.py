@@ -3,12 +3,15 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import supriya_midi
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "supriya-midi"
 copyright = "2026-, Josephine Wolf Oberholtzer"
 author = "Joséphine Wolf Oberholtzer"
+version = release = supriya_midi.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

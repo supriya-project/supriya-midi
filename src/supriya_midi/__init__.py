@@ -7,6 +7,7 @@ from typing import Any, Callable, Generic, Iterable, TypeAlias, TypeVar
 from typing_extensions import Self
 
 from ._midi import RtMidi, RtMidiAPI, RtMidiErrorType, RtMidiIn, RtMidiOut
+from ._version import __version__, __version_info__
 
 Callback: TypeAlias = Callable[[Iterable[int], float, Any], None]
 ErrorCallback: TypeAlias = Callable[[RtMidiErrorType, str, Any], None]
@@ -490,9 +491,12 @@ __all__ = [
     "MidiOut",
     "RtMidiAPI",
     "RtMidiErrorType",
+    "__version__",
+    "__version_info__",
     "get_api_display_name",
     "get_api_name",
     "get_compiled_apis",
     "get_compiled_apis_by_name",
     "get_version",
+    "list_ports",
 ]
