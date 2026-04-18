@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.28...3.31)
 
-#set(CMAKE_BUILD_TYPE Debug)
+if(UNIX AND NOT APPLE)
+    set(LINUX TRUE)
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -27,7 +30,10 @@ execute_process(
   OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE nanobind_ROOT)
 find_package(nanobind CONFIG REQUIRED)
 
-set(ALSA ON CACHE BOOL "" FORCE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(ALSA ON CACHE BOOL "" FORCE)
+endif()
+
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(RTMIDI_BUILD_STATIC_LIBS ON CACHE BOOL "" FORCE)
 set(RTMIDI_BUILD_TESTING OFF CACHE BOOL "" FORCE)
@@ -36,9 +42,4 @@ add_subdirectory(ext/rtmidi EXCLUDE_FROM_ALL)
 nanobind_add_module(_midi src/supriya_midi/_midi.cpp)
 target_include_directories(_midi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ext/rtmidi)
 target_link_libraries(_midi PRIVATE rtmidi)
-if(MSVC)
-    target_compile_options(_midi PRIVATE /W4)
-else()
-    target_compile_options(_midi PRIVATE -Wall -Wextra)
-endif()
 install(TARGETS _midi DESTINATION supriya_midi)
