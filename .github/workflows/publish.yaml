@@ -58,7 +58,7 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v6
       with:
-        name: wheel-${{ matrix.dist }}
+        name: dist-${{ matrix.dist }}
         path: ./wheelhouse/*.whl
     strategy:
       fail-fast: false
