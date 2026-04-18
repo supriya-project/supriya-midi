@@ -37,11 +37,13 @@ Open an input port and handle incoming MIDI messages with a custom callback:
 
     from supriya_midi import MidiIn
 
-Loopback
---------
+    def callback(message, timestamp, data=None):
+        print(f"Received {message=}")
 
-Connect a virtual output to an input:
+    midi_in = MidiIn()
+    midi_in.set_callback(callback)
 
-..  code:: python
-
-    from supriya_midi import MidiIn, MidiOut
+    if midi_in.get_ports():
+        midi_in.open_port(0)
+    else:
+        midi_in.open_virtual_port("My virtual output")

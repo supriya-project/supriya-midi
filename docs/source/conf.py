@@ -28,6 +28,8 @@ templates_path = ["_templates"]
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
+html_favicon = "favicon.ico"
+html_logo = "icon.svg"
 html_static_path = ["_static"]
 html_theme = "sphinx_immaterial"
 html_theme_options = {

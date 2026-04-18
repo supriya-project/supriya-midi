@@ -1,6 +1,6 @@
 :hero: a Python binding for RtMidi
 
-Supriay MIDI (|release|)
+Supriya MIDI (|release|)
 ========================
 
 Supriya MIDI is a `nanobind`_-based Python binding for the C++ `RtMidi`_
@@ -19,6 +19,8 @@ there are some minor differences:
 - Supriya MIDI's MIDI message callback takes three arguments (message,
   timestamp, data) vs python-rtmidi's two argument callback (message/timestamp
   pair, data).
+- Supriya MIDI has a single custom exception class vs python-rtmidi's variety
+  of exceptions.
 
 Most code that works with `python-rtmidi`_ should be easily adaptable to
 Supriya MIDI.
@@ -31,7 +33,7 @@ Supriya MIDI.
     :hidden:
 
     installation
-    quickstart
+    basic-usage
     api
 
 ..  _RtMidi: https://github.com/thestk/rtmidi
