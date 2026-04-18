@@ -35,6 +35,7 @@ Supriya MIDI.
     installation
     basic-usage
     api
+    changelog
 
 ..  _RtMidi: https://github.com/thestk/rtmidi
 ..  _joséphine: https://josephine-wolf-oberholtzer.com/
