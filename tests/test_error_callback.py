@@ -5,16 +5,16 @@ from unittest import mock
 
 import pytest
 
-from supriya_midi import MidiIn, MidiOut, RtMidiErrorType
+from supriya_midi import MidiIn, MidiOut, RtMidiError, RtMidiErrorType
 
 
 def test_MidiIn_default_error_callback(midi_in: MidiIn) -> None:
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RtMidiError):
         midi_in.open_port(midi_in.get_port_count() + 1)
 
 
 def test_MidiOut_default_error_callback(midi_out: MidiOut) -> None:
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RtMidiError):
         midi_out.open_port(midi_out.get_port_count() + 1)
 
 
@@ -60,7 +60,7 @@ def test_MidiIn_cancel_error_callback(midi_in: MidiIn) -> None:
     error_callback = mock.Mock()
     midi_in.set_error_callback(error_callback)
     midi_in.cancel_error_callback()
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RtMidiError):
         midi_in.open_port(midi_in.get_port_count() + 1)
     assert error_callback.mock_calls == []
 
@@ -69,6 +69,6 @@ def test_MidiOut_cancel_error_callback(midi_out: MidiOut) -> None:
     error_callback = mock.Mock()
     midi_out.set_error_callback(error_callback)
     midi_out.cancel_error_callback()
-    with pytest.raises(RuntimeError):
+    with pytest.raises(RtMidiError):
         midi_out.open_port(midi_out.get_port_count() + 1)
     assert error_callback.mock_calls == []

@@ -1,6 +1,6 @@
 .PHONY: docs
 
-all: stubgen format
+all: stubgen format docs
 
 docs:
 	uv run make -C docs/ html

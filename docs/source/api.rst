@@ -33,6 +33,8 @@ API
 
 .. autofunction:: supriya_midi.list_ports
 
+.. autoexception:: RtMidiError
+
 .. autoclass:: supriya_midi._midi.RtMidiAPI
    :member-order: bysource
    :members:

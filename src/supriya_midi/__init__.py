@@ -13,10 +13,22 @@ Callback: TypeAlias = Callable[[Iterable[int], float, Any], None]
 ErrorCallback: TypeAlias = Callable[[RtMidiErrorType, str, Any], None]
 
 
+class RtMidiError(Exception):
+    """
+    An RtMidi error.
+    """
+
+    def __init__(
+        self, message: str, error_type: RtMidiErrorType = RtMidiErrorType.UNSPECIFIED
+    ) -> None:
+        super().__init__(message)
+        self.error_type = error_type
+
+
 def _default_error_callback(
     error_type: RtMidiErrorType, error_text: str, data: Any = None
 ) -> None:
-    raise RuntimeError((error_type, error_text))
+    raise RtMidiError(error_text, error_type=error_type)
 
 
 def get_api_display_name(api: RtMidiAPI) -> str:
@@ -490,6 +502,7 @@ __all__ = [
     "MidiIn",
     "MidiOut",
     "RtMidiAPI",
+    "RtMidiError",
     "RtMidiErrorType",
     "__version__",
     "__version_info__",
