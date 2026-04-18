@@ -6,18 +6,19 @@ from pathlib import Path
 
 
 def calculate_new_version_info(old_version_name: str) -> tuple[int, int, int]:
-    old_year, old_month, old_beta = [
-        int(x) for x in re.match(r"v?(\d+).(\d+)b(\d+)", old_version_name).groups()
-    ]
     now = datetime.datetime.now(datetime.UTC)
     new_year, new_month, new_beta = int(str(now.year)[2:]), now.month, 0
-    if (old_year, old_month) == (new_year, new_month):
-        new_beta = old_beta + 1
+    if old_version_name:
+        old_year, old_month, old_beta = [
+            int(x) for x in re.match(r"v?(\d+).(\d+)b(\d+)", old_version_name).groups()
+        ]
+        if (old_year, old_month) == (new_year, new_month):
+            new_beta = old_beta + 1
     return new_year, new_month, new_beta
 
 
 def rewrite_version_file(year: int, month: int, beta: int) -> None:
-    path = Path(__file__).parent.parent / "src" / "supriya" / "_version.py"
+    path = Path(__file__).parent.parent / "src" / "supriya_midi" / "_version.py"
     text = path.read_text()
     lines = text.splitlines()
     for i, line in enumerate(lines):

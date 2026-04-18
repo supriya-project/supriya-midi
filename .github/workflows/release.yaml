@@ -24,11 +24,13 @@ jobs:
     - name: Get latest version
       run: echo OLD_VERSION=$(gh release list -L 1 --json name | jq -r '.[0].name') >> $GITHUB_ENV
     - name: Bump version file
-      run: echo NEW_VERSION=$(uv run dev/bump-version.py ${OLD_VERSION}) >> $GITHUB_ENV
+      run: echo NEW_VERSION=$(uv run dev/bump-version.py "${OLD_VERSION}") >> $GITHUB_ENV
     - name: Debug
       run: |
-        echo ${OLD_VERSION}
-        echo ${NEW_VERSION}
+        echo "${OLD_VERSION}"
+        echo "${NEW_VERSION}"
+    - name: uv lock
+      run: uv lock
     - name: Push changes
       run: |
         git config user.name "GitHub Actions Bot"
