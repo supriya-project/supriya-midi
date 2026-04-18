@@ -29,7 +29,7 @@ def api(request) -> RtMidiAPI:
 
 @pytest.fixture
 def midi_in(api: RtMidiAPI) -> Generator[MidiIn, None, None]:
-    midi_in = MidiIn(api=api, name=IN_CLIENT_NAME)
+    midi_in = MidiIn(api=api, client_name=IN_CLIENT_NAME)
     assert midi_in.get_current_api() == api
     yield midi_in
     if not midi_in.is_deleted:
@@ -39,7 +39,7 @@ def midi_in(api: RtMidiAPI) -> Generator[MidiIn, None, None]:
 
 @pytest.fixture
 def midi_out(api: RtMidiAPI) -> Generator[MidiOut, None, None]:
-    midi_out = MidiOut(api=api, name=OUT_CLIENT_NAME)
+    midi_out = MidiOut(api=api, client_name=OUT_CLIENT_NAME)
     assert midi_out.get_current_api() == api
     yield midi_out
     if not midi_out.is_deleted:

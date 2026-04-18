@@ -8,6 +8,9 @@ API
    :show-inheritance:
    :undoc-members:
 
+   .. automethod:: __enter__
+   .. automethod:: __exit__
+
 .. autoclass:: supriya_midi.MidiIn
    :members:
    :show-inheritance:
@@ -29,6 +32,8 @@ API
 .. autofunction:: supriya_midi.get_rtmidi_version
 
 .. autofunction:: supriya_midi.list_ports
+
+.. autoexception:: RtMidiError
 
 .. autoclass:: supriya_midi._midi.RtMidiAPI
    :member-order: bysource

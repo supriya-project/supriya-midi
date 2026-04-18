@@ -3,13 +3,15 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import supriya_midi
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "supriya-midi"
 copyright = "2026-, Josephine Wolf Oberholtzer"
-author = "Josephine Wolf Oberholtzer"
 author = "Joséphine Wolf Oberholtzer"
+version = release = supriya_midi.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -26,6 +28,8 @@ templates_path = ["_templates"]
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
+html_favicon = "favicon.ico"
+html_logo = "icon.svg"
 html_static_path = ["_static"]
 html_theme = "sphinx_immaterial"
 html_theme_options = {
@@ -37,7 +41,7 @@ html_theme_options = {
         "content.tooltips",
         "navigation.footer",
         # "navigation.tabs",
-        # "navigation.top",
+        "navigation.top",
         "toc.follow",
     ],
     "palette": [
@@ -67,7 +71,9 @@ html_theme_options = {
     "site_url": "https://supriya-project.github.io/supriya-midi/",
     "version_dropdown": False,
 }
+html_title = "Supriya MIDI"
 object_description_options = [
     ("py:.*", dict(include_fields_in_toc=False)),  # Hide "Parameters" in TOC
+    ("py:exception", {"toc_icon_class": "data", "toc_icon_text": "X"}),
     ("py:parameter", dict(include_in_toc=False)),  # Hide "p" parameter entries in TOC
 ]
