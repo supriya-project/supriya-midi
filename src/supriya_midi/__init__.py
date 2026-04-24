@@ -4,6 +4,7 @@ python-rtmidi.
 """
 
 from ._version import __version__, __version_info__
+from .constants import MidiMessageType
 from .core import (
     MidiBase,
     MidiIn,
@@ -16,15 +17,36 @@ from .core import (
     get_rtmidi_version,
     list_ports,
 )
+from .messages import (
+    AftertouchMessage,
+    ChannelPressureMessage,
+    ControllerChangeMessage,
+    MidiMessage,
+    NoteOffMessage,
+    NoteOnMessage,
+    PitchWheelMessage,
+    ProgramChangeMessage,
+    VoiceMessage,
+)
 from .rtmidi_ext import RtMidiAPI, RtMidiErrorType
 
 __all__ = [
+    "AftertouchMessage",
+    "ChannelPressureMessage",
+    "ControllerChangeMessage",
     "MidiBase",
     "MidiIn",
+    "MidiMessage",
+    "MidiMessageType",
     "MidiOut",
+    "NoteOffMessage",
+    "NoteOnMessage",
+    "PitchWheelMessage",
+    "ProgramChangeMessage",
     "RtMidiAPI",
     "RtMidiError",
     "RtMidiErrorType",
+    "VoiceMessage",
     "__version__",
     "__version_info__",
     "get_api_display_name",
