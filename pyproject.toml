@@ -17,6 +17,7 @@ dev = [
     "nanobind>=2.12.0",
     "pre-commit>=4.5.1",
     "pytest>=9.0.2",
+    "pytest-cov>=7.1.0",
     "ruff>=0.15.7",
     "sphinx-immaterial>=0.13.9",
     "ty>=0.0.24",
@@ -47,6 +48,11 @@ make-summary-multi-line = true
 pre-summary-newline = true
 
 [tool.pytest]
+addopts = [
+  "--doctest-modules",
+  "-rf",
+  "-vv",
+]
 markers = ["ci: mark test for use in cibuildwheel"]
 testpaths = ["tests/"]
 

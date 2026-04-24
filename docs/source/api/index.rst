@@ -8,4 +8,6 @@ supriya_midi
     :hidden:
 
     core
+    constants
+    messages
     rtmidi_ext

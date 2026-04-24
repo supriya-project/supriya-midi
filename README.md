@@ -34,6 +34,8 @@ pip install supriya-midi
 
 ## Usage
 
+### Output
+
 Open an output port and send MIDI messages to it:
 
 ```python
@@ -58,6 +60,8 @@ with midi_out:
 del midi_out
 ```
 
+### Input
+
 Open an input port and handle incoming MIDI messages with a custom callback:
 
 
@@ -66,6 +70,27 @@ from supriya_midi import MidiIn
 
 def callback(message, timestamp, data=None):
     print(f"Received {message=}")
+
+midi_in = MidiIn()
+midi_in.set_callback(callback)
+
+if midi_in.get_ports():
+    midi_in.open_port(0)
+else:
+    midi_in.open_virtual_port("My virtual output")
+```
+
+### Message dataclasses
+
+Open an input port and handle incoming MIDI messages with a custom callback,
+converting the raw integer sequence into message dataclasses:
+
+```python
+from supriya_midi import MidiIn, MidiMessage
+
+def callback(message, timestamp, data=None):
+    message_dataclass = MidiMessage.parse(message)
+    print(f"Received {message_dataclass=}")
 
 midi_in = MidiIn()
 midi_in.set_callback(callback)
