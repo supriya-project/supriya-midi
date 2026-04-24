@@ -31,6 +31,10 @@ jobs:
     environment:
       name: github-pages
     needs: [build-docs]
+    permissions:
+      id-token: write
+      pages: write
     runs-on: ubuntu-latest
     steps:
     - uses: actions/deploy-pages@v5
+
