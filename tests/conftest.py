@@ -2,11 +2,11 @@ from typing import Generator
 
 import pytest
 
-from supriya_midi import MidiIn, MidiOut, RtMidi, RtMidiAPI
+from supriya_midi import MidiIn, MidiOut, RtMidiAPI, get_compiled_apis
 
 TESTED_APIS = [
     api
-    for api in RtMidi.get_compiled_api()
+    for api in get_compiled_apis()
     if api
     in [
         RtMidiAPI.LINUX_ALSA,

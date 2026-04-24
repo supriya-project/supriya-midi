@@ -4,8 +4,8 @@ from supriya_midi import (
     RtMidiAPI,
     get_api_display_name,
     get_api_name,
-    get_compiled_api,
     get_compiled_api_by_name,
+    get_compiled_apis,
     get_rtmidi_version,
 )
 
@@ -44,8 +44,8 @@ def test_get_api_name(api: RtMidiAPI, expected_name: str) -> None:
     assert get_api_name(api) == expected_name
 
 
-def test_get_compiled_api() -> None:
-    assert len(compiled_apis := get_compiled_api()) > 0
+def test_get_compiled_apis() -> None:
+    assert len(compiled_apis := get_compiled_apis()) > 0
     assert all(api <= RtMidiAPI.RTMIDI_DUMMY for api in compiled_apis)
     # validate that a non-dummy API is present
     assert any(api < RtMidiAPI.RTMIDI_DUMMY for api in compiled_apis)
@@ -64,7 +64,7 @@ def test_get_compiled_api() -> None:
 )
 def test_get_compiled_api_by_name(name: str, expected_api: RtMidiAPI) -> None:
     api = get_compiled_api_by_name(name)
-    if expected_api in get_compiled_api():
+    if expected_api in get_compiled_apis():
         assert api == expected_api
     else:
         assert api == RtMidiAPI.UNSPECIFIED

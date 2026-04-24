@@ -21,7 +21,7 @@ pre-commit-install:
 	uv run pre-commit install
 
 stubgen:
-	 uv run python -m nanobind.stubgen --module supriya_midi._midi --marker-file src/supriya_midi/py.typed --output-dir src/supriya_midi
+	 uv run python -m nanobind.stubgen --module supriya_midi.rtmidi_ext --marker-file src/supriya_midi/py.typed --output-dir src/supriya_midi
 
 ty:
 	uv run ty check src/ tests/
