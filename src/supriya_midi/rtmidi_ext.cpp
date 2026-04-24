@@ -40,8 +40,14 @@ void error_callback_function(RtMidiError::Type type, const std::string &errorTex
 
 // Module definition
 
-NB_MODULE(_midi, m) {
-    m.doc() = "RtMidi bindings";
+NB_MODULE(rtmidi_ext, m) {
+    m.doc() = R"pbdoc(
+        Low-level Python/RtMidi bindings.
+
+        ..  note:: 
+
+            Please use the higher-level classes defined in :py:mod:`supriya_midi.core` instead.
+    )pbdoc";
     nb::enum_<RtMidi::Api>(m, "RtMidiAPI", nb::is_arithmetic())
         .value("UNSPECIFIED", RtMidi::UNSPECIFIED)
         .value("MACOSX_CORE", RtMidi::MACOSX_CORE)
