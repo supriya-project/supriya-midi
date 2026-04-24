@@ -22,32 +22,18 @@ jobs:
       run: uv sync
     - name: Build docs
       run: uv run make -C docs html
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-pages-artifact@v5
       with:
-        name: docs
         path: ./docs/build/html/
 
   update-gh-pages:
     name: Update gh-pages
+    environment:
+      name: github-pages
     needs: [build-docs]
+    permissions:
+      id-token: write
+      pages: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/download-artifact@v7
-      with:
-        name: docs
-        path: docs
-    - uses: actions/checkout@v6
-      with:
-        path: gh-pages
-        ref: gh-pages
-    - name: Rsync docs
-      run: rsync -rtv --del --exclude=.git docs/ gh-pages/
-    - name: Touch .nojekyll
-      run: touch gh-pages/.nojekyll
-    - uses: peaceiris/actions-gh-pages@v4.0.0
-      with:
-        allow_empty_commit: true
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: gh-pages
-        user_name: github-actions[bot]
-        user_email: github-actions[bot]@users.noreply.github.com
+    - uses: actions/deploy-pages@v5
