@@ -1,4 +1,10 @@
-"""RtMidi bindings"""
+"""
+Low-level Python/RtMidi bindings.
+
+..  note::
+
+    Please use the higher-level classes defined in :py:mod:`supriya_midi.core` instead.
+"""
 
 import enum
 from collections.abc import Callable, Sequence

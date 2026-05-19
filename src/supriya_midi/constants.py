@@ -16,17 +16,20 @@ class MidiMessageType(IntEnum):
     PROGRAM_CHANGE = 0xC0
     CHANNEL_PRESSURE = 0xD0
     PITCH_WHEEL = 0xE0
+
     SYSTEM_EXCLUSIVE = 0xF0
-    MIDI_QUARTER_FRAME = 0xF1
-    SONG_POSITION_POINTER = 0xF2
-    SONG_SELECT = 0xF3
+    QUARTER_FRAME = 0xF1
+    SONG_POSITION = 0xF2
+    SONG_REQUEST = 0xF3
     TUNE_REQUEST = 0xF6
-    MIDI_CLOCK = 0xF8
-    MIDI_START = 0xFA
-    MIDI_CONTINUE = 0xFB
-    MIDI_STOP = 0xFC
+
+    CLOCK = 0xF8
+    START = 0xFA
+    CONTINUE = 0xFB
+    STOP = 0xFC
     ACTIVE_SENSE = 0xFE
     RESET = 0xFF
+    META = 0xFF
 
     @classmethod
     def parse(cls, value: SupportsInt) -> Self:

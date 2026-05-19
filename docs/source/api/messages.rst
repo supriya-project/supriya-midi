@@ -4,43 +4,101 @@ supriya_midi.messages
 ..  automodule:: supriya_midi.messages
 
 ..  autoclass:: supriya_midi.messages.MidiMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
-
-..  autoclass:: supriya_midi.messages.VoiceMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.NoteOffMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.NoteOnMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.AftertouchMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.ControllerChangeMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.ProgramChangeMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.ChannelPressureMessage
-
-    .. automethod:: __iter__
-    .. automethod:: parse
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
 ..  autoclass:: supriya_midi.messages.PitchWheelMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
 
-    .. automethod:: __iter__
-    .. automethod:: parse
+..  autoclass:: supriya_midi.messages.SystemExclusiveMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.QuarterFrameMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.SongPositionMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.SongRequestMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.TuneRequestMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.ClockMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.StartMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.ContinueMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.StopMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.ActiveSenseMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.ResetMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
+
+..  autoclass:: supriya_midi.messages.MetaMessage
+    :members:
+    :show-inheritance:
+    :special-members: __iter__
