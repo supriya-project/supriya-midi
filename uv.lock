@@ -1032,7 +1032,7 @@ wheels = [
 
 [[package]]
 name = "supriya-midi"
-version = "26.4b1"
+version = "26.5b0"
 source = { editable = "." }
 dependencies = [
     { name = "typing-extensions" },
