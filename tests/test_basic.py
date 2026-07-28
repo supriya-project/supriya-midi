@@ -1,5 +1,6 @@
 import pytest
 
+import supriya_midi
 from supriya_midi import (
     RtMidiAPI,
     get_api_display_name,
@@ -10,6 +11,10 @@ from supriya_midi import (
 )
 
 pytestmark = pytest.mark.ci
+
+
+def test_all_names_are_exported() -> None:
+    assert all(hasattr(supriya_midi, name) for name in supriya_midi.__all__)
 
 
 @pytest.mark.parametrize(
