@@ -1,3 +1,5 @@
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -12,13 +14,12 @@ namespace nb = nanobind;
 using namespace nb::literals;
 
 struct CallbackHandle {
-    nb::handle callback;
-    nb::handle data;
+    nb::object callback;
+    nb::object data;
 
-    ~CallbackHandle() {
-        ~callback;
-        ~data;
-    }
+    CallbackHandle(nb::handle callback, nb::handle data)
+        : callback(nb::borrow<nb::object>(callback)),
+          data(nb::borrow<nb::object>(data)) {}
 };
 
 
@@ -37,6 +38,57 @@ void error_callback_function(RtMidiError::Type type, const std::string &errorTex
     auto* handle = static_cast<CallbackHandle*>(userData);
     nb::borrow<nb::callable>(handle->callback)(type, errorText, nb::borrow(handle->data));
 }
+
+template <typename RtMidiType>
+class PyRtMidi : public RtMidiType {
+public:
+    using RtMidiType::RtMidiType;
+
+    ~PyRtMidi() noexcept override {
+        if (error_callback_handle_) {
+            RtMidiType::setErrorCallback(nullptr, nullptr);
+        }
+    }
+
+    void set_error_callback(nb::callable callback, nb::object data) {
+        auto handle = std::make_unique<CallbackHandle>(callback, data);
+        RtMidiType::setErrorCallback(&error_callback_function, handle.get());
+        error_callback_handle_ = std::move(handle);
+    }
+
+private:
+    std::unique_ptr<CallbackHandle> error_callback_handle_;
+};
+
+class PyRtMidiIn : public PyRtMidi<RtMidiIn> {
+public:
+    using PyRtMidi<RtMidiIn>::PyRtMidi;
+
+    ~PyRtMidiIn() noexcept override {
+        if (callback_handle_) {
+            RtMidiIn::cancelCallback();
+        }
+    }
+
+    void cancel_callback() {
+        RtMidiIn::cancelCallback();
+        callback_handle_.reset();
+    }
+
+    void set_callback(nb::callable callback, nb::object data) {
+        auto handle = std::make_unique<CallbackHandle>(callback, data);
+        if (callback_handle_) {
+            RtMidiIn::cancelCallback();
+        }
+        RtMidiIn::setCallback(&callback_function, handle.get());
+        callback_handle_ = std::move(handle);
+    }
+
+private:
+    std::unique_ptr<CallbackHandle> callback_handle_;
+};
+
+using PyRtMidiOut = PyRtMidi<RtMidiOut>;
 
 // Module definition
 
@@ -85,36 +137,34 @@ NB_MODULE(rtmidi_ext, m) {
         .def(
             "set_error_callback",
             [](RtMidi &self, nb::callable callback, nb::object data) {
-                auto* handle = new CallbackHandle();
-                handle->callback = nb::handle(callback);
-                handle->data = nb::handle(data);
-                self.setErrorCallback(&error_callback_function, handle);
+                if (auto* midi_in = dynamic_cast<PyRtMidiIn*>(&self)) {
+                    midi_in->set_error_callback(callback, data);
+                } else if (auto* midi_out = dynamic_cast<PyRtMidiOut*>(&self)) {
+                    midi_out->set_error_callback(callback, data);
+                } else {
+                    throw std::runtime_error("Unsupported RtMidi implementation");
+                }
             },
             nb::arg("callback"), nb::arg("data") = nb::none()
         )
         .def("set_port_name", &RtMidi::setPortName, nb::arg("port_name"))
         ;
-    nb::class_<RtMidiIn, RtMidi>(m, "RtMidiIn")
+    nb::class_<PyRtMidiIn, RtMidi>(m, "RtMidiIn")
         .def(nb::init<RtMidi::Api, const std::string&, unsigned int>(), nb::arg("api") = RtMidi::Api::UNSPECIFIED, nb::arg("client_name") = "RtMidi Input Client", nb::arg("queue_size_limit") = 1024)
-        .def("cancel_callback", &RtMidiIn::cancelCallback)
-        .def("get_current_api", &RtMidiIn::getCurrentApi)
-        .def("get_message", [](RtMidiIn &self) { std::vector<unsigned char> message; double timeStamp = self.getMessage(&message); return std::make_tuple(message, timeStamp); })
-        .def("ignore_types", &RtMidiIn::ignoreTypes, nb::arg("sysex") = true, nb::arg("timing") = true, nb::arg("active_sense") = true)
-        .def("set_buffer_size", &RtMidiIn::setBufferSize, nb::arg("size") = 1024, nb::arg("count") = 4)
+        .def("cancel_callback", &PyRtMidiIn::cancel_callback)
+        .def("get_current_api", &PyRtMidiIn::getCurrentApi)
+        .def("get_message", [](PyRtMidiIn &self) { std::vector<unsigned char> message; double timeStamp = self.getMessage(&message); return std::make_tuple(message, timeStamp); })
+        .def("ignore_types", &PyRtMidiIn::ignoreTypes, nb::arg("sysex") = true, nb::arg("timing") = true, nb::arg("active_sense") = true)
+        .def("set_buffer_size", &PyRtMidiIn::setBufferSize, nb::arg("size") = 1024, nb::arg("count") = 4)
         .def(
             "set_callback",
-            [](RtMidiIn &self, nb::callable callback, nb::object data) {
-                auto* handle = new CallbackHandle();
-                handle->callback = nb::handle(callback);
-                handle->data = nb::handle(data);
-                self.setCallback(&callback_function, handle);
-            },
+            &PyRtMidiIn::set_callback,
             nb::arg("callback"), nb::arg("data") = nb::none()
         );
         ;
-    nb::class_<RtMidiOut, RtMidi>(m, "RtMidiOut")
+    nb::class_<PyRtMidiOut, RtMidi>(m, "RtMidiOut")
         .def(nb::init<RtMidi::Api, const std::string&>(), nb::arg("api") = RtMidi::Api::UNSPECIFIED, nb::arg("client_name") = "RtMidi Output Client")
-        .def("get_current_api", &RtMidiOut::getCurrentApi)
-        .def("send_message", nb::overload_cast<const std::vector<unsigned char>*>(&RtMidiOut::sendMessage), nb::arg("message"))
+        .def("get_current_api", &PyRtMidiOut::getCurrentApi)
+        .def("send_message", nb::overload_cast<const std::vector<unsigned char>*>(&PyRtMidiOut::sendMessage), nb::arg("message"))
         ;
 }
