@@ -5,6 +5,13 @@ repos:
   - id: check-yaml
   - id: end-of-file-fixer
   - id: trailing-whitespace
+- repo: https://github.com/zizmorcore/zizmor-pre-commit
+  # Zizmor version.
+  rev: v1.30.0
+  hooks:
+    # Run the linter.
+    - id: zizmor
+      args: [--no-progress, --fix]
 - repo: https://github.com/astral-sh/ruff-pre-commit
   rev: v0.15.9
   hooks:

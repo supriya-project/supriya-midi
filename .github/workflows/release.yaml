@@ -9,29 +9,40 @@ concurrency:
 env:
   GH_TOKEN: "${{ github.token }}"
 
-jobs:
+permissions: {}
 
+jobs:
   bump-version:
     name: Bump version
+    environment: release
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
+        persist-credentials: true
         submodules: recursive
-    - uses: astral-sh/setup-uv@v7
+    - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
       with:
         python-version: "3.14"
-    - name: Get latest version
-      run: echo OLD_VERSION=$(gh release list -L 1 --json name | jq -r '.[0].name') >> $GITHUB_ENV
-    - name: Bump version file
-      run: echo NEW_VERSION=$(uv run dev/bump-version.py "${OLD_VERSION}") >> $GITHUB_ENV
-    - name: Debug
+    - name: Get old version
+      id: old-version
       run: |
-        echo "${OLD_VERSION}"
-        echo "${NEW_VERSION}"
-    - name: uv lock
-      run: uv lock
+        VERSION=$(gh release list -L 1 --json name | jq -r '.[0].name')
+        echo version=${VERSION} >> "${GITHUB_OUTPUT}"
+        echo "${VERSION}"
+    - name: Bump version file
+      env:
+        OLD_VERSION: ${{ steps.old-version.outputs.version }}
+      id: new-version
+      run: |
+        VERSION=$(uv run dev/bump-version.py "${OLD_VERSION}")
+        echo version=${VERSION} >> "${GITHUB_OUTPUT}"
+        echo "${VERSION}"
     - name: Push changes
+      env:
+        NEW_VERSION: ${{ steps.new-version.outputs.version }}
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "<>"
@@ -39,9 +50,10 @@ jobs:
         git commit -m "Bump version to ${NEW_VERSION}"
         git push
     - name: Create release
-      uses: softprops/action-gh-release@v2
-      with:
-        draft: true
-        generate_release_notes: true
-        name: "${{ env.NEW_VERSION }}"
-        tag_name: "v${{ env.NEW_VERSION }}"
+      env:
+        NEW_VERSION: ${{ steps.new-version.outputs.version }}
+      run: |
+        gh release create "v${NEW_VERSION}" \
+          --draft \
+          --generate-notes \
+          --title "${NEW_VERSION}"
