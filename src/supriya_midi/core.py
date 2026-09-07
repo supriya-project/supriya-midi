@@ -397,7 +397,7 @@ class MidiIn(MidiBase[RtMidiIn]):
         """
         return self._rt_midi.get_current_api()
 
-    def get_message(self) -> tuple[list[int], float]:
+    def get_message(self) -> tuple[list[int], float] | None:
         """
         Poll for MIDI messages.
 
@@ -405,7 +405,9 @@ class MidiIn(MidiBase[RtMidiIn]):
             Pair of the MIDI message and delta timestamp, or ``None`` if no
             message available
         """
-        return self._rt_midi.get_message()
+        if not (data := self._rt_midi.get_message())[0]:
+            return
+        return data
 
     def ignore_types(
         self, sysex: bool = True, timing: bool = True, active_sense: bool = True
