@@ -58,6 +58,7 @@ def test_virtual_port_number(midi_in: MidiIn, midi_out: MidiOut) -> None:
 
 def test_send_and_get_message(midi_in: MidiIn, midi_out: MidiOut) -> None:
     set_up_loopback(midi_in, midi_out)
+    assert midi_in.get_message() is None
     midi_out.send_message(NOTE_ON)
     midi_out.send_message(NOTE_OFF)
     time.sleep(DELAY)
