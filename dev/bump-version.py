@@ -30,7 +30,9 @@ def rewrite_version_file(year: int, month: int, beta: int) -> None:
 def update_pyproject_toml(year: int, month: int, beta: int) -> None:
     version = f"{year}.{month}b{beta}"
     subprocess.run(
-        ["uv", "version", "--no-sync", version], capture_output=True, check=True
+        ["uv", "--quiet", "version", "--no-sync", version],
+        capture_output=True,
+        check=True,
     )
 
 
