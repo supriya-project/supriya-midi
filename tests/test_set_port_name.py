@@ -19,7 +19,7 @@ def test_set_port_name(midi_in: MidiIn, midi_out: MidiOut) -> None:
         if client.startswith(OUT_CLIENT_NAME) and port.startswith(OUT_PORT_NAME):
             break
     else:
-        raise Exception("No matching port found")
+        raise RuntimeError("No matching port found")
     midi_out.set_port_name("new_port")
     for port in midi_in.get_ports():
         client, port = port.split(":", 1)

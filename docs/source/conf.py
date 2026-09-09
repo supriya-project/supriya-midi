@@ -73,7 +73,7 @@ html_theme_options = {
 }
 html_title = "Supriya MIDI"
 object_description_options = [
-    ("py:.*", dict(include_fields_in_toc=False)),  # Hide "Parameters" in TOC
+    ("py:.*", {"include_fields_in_toc": False}),  # Hide "Parameters" in TOC
     ("py:exception", {"toc_icon_class": "data", "toc_icon_text": "X"}),
-    ("py:parameter", dict(include_in_toc=False)),  # Hide "p" parameter entries in TOC
+    ("py:parameter", {"include_in_toc": False}),  # Hide "p" parameter entries in TOC
 ]
