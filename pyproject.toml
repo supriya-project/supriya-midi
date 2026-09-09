@@ -31,6 +31,7 @@ test-command = "pytest -v -m ci {package}/tests/"
 before-all = [
     "yum install -y alsa-lib-devel alsa-utils jack-audio-connection-kit-devel",
 ]
+repair-wheel-command = "auditwheel repair --exclude libasound.so.2 --lib-sdir . -w {dest_dir} {wheel}"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-musllinux*"
