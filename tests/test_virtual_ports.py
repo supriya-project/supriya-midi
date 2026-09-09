@@ -1,5 +1,6 @@
 import time
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 import pytest
 
@@ -32,13 +33,13 @@ def set_up_loopback(midi_in: MidiIn, midi_out: MidiOut) -> None:
     ports_before = list_ports()
     midi_out.open_virtual_port(port_name=OUT_PORT_NAME)
     ports_after = midi_in.get_ports()
-    midi_out_port_name = list(set(ports_after).difference(ports_before))[0]
+    midi_out_port_name = next(iter(set(ports_after).difference(ports_before)))
     for port_number, port in enumerate(ports_after):
         if port == midi_out_port_name:
             midi_in.open_port(port_number)
             break
     else:
-        raise IOError("Could not find MIDI output port.")
+        raise OSError("Could not find MIDI output port.")
 
 
 def test_virtual_port_number(midi_in: MidiIn, midi_out: MidiOut) -> None:

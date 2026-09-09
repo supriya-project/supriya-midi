@@ -57,6 +57,13 @@ addopts = [
 markers = ["ci: mark test for use in cibuildwheel"]
 testpaths = ["tests/"]
 
+[tool.ruff]
+# always the oldest python version supriya supports
+target-version = "py310"
+
+[tool.ruff.lint]
+preview = true
+
 [tool.scikit-build]
 sdist.include = ["ext/"]
 wheel.exclude = ["*.cpp"]

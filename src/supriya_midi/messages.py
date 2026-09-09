@@ -7,7 +7,8 @@ message dataclasses back into raw integers for sending.
 """
 
 import dataclasses
-from typing import ClassVar, Sequence, Type
+from collections.abc import Sequence
+from typing import ClassVar
 
 from typing_extensions import Self
 
@@ -30,7 +31,7 @@ class MidiMessage:
         Use this method on the parent class to parse any valid sequence of
         integers into the appropriate subclass.
         """
-        message_class: Type[MidiMessage] = {
+        message_class: type[MidiMessage] = {
             MidiMessageType.ACTIVE_SENSE: ActiveSenseMessage,
             MidiMessageType.AFTERTOUCH: AftertouchMessage,
             MidiMessageType.CHANNEL_PRESSURE: ChannelPressureMessage,

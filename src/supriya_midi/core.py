@@ -5,7 +5,8 @@ These are higher-level wrappers around the low-level Python bindings, and have
 more guard-rails.
 """
 
-from typing import Any, Callable, Generic, Iterable, TypeAlias, TypeVar
+from collections.abc import Callable, Iterable
+from typing import Any, Generic, TypeAlias, TypeVar
 
 from typing_extensions import Self
 
@@ -140,7 +141,7 @@ class MidiBase(Generic[R]):
         """
         return self
 
-    def __exit__(self, *exc_info: Any) -> None:
+    def __exit__(self, *exc_info: object) -> None:
         """
         Support the context manager protocol.
 
