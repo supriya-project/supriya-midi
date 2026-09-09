@@ -44,7 +44,7 @@ NB_MODULE(rtmidi_ext, m) {
     m.doc() = R"pbdoc(
         Low-level Python/RtMidi bindings.
 
-        ..  note:: 
+        ..  note::
 
             Please use the higher-level classes defined in :py:mod:`supriya_midi.core` instead.
     )pbdoc";
