@@ -29,7 +29,7 @@ jobs:
     - name: Get old version
       id: old-version
       run: |
-        VERSION=$(gh release list -L 1 --json name | jq -r '.[0].name')
+        VERSION=$(gh release list -L 1 --json name | jq -r '.[0].name // "00.0b0"')
         echo version=${VERSION} >> "${GITHUB_OUTPUT}"
         echo "${VERSION}"
     - name: Bump version file
@@ -37,7 +37,7 @@ jobs:
         OLD_VERSION: ${{ steps.old-version.outputs.version }}
       id: new-version
       run: |
-        VERSION=$(uv run dev/bump-version.py "${OLD_VERSION}")
+        VERSION=$(uv --quiet run dev/bump-version.py "${OLD_VERSION}")
         echo version=${VERSION} >> "${GITHUB_OUTPUT}"
         echo "${VERSION}"
     - name: Push changes
