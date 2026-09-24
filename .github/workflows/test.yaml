@@ -131,7 +131,6 @@ jobs:
     - name: Install Linux deps
       if: runner.os == 'Linux'
       run: |
-        ls -la /dev/snd/seq
         sudo apt-get update
         sudo apt-get install -y libasound2-dev alsa-utils jackd
         sudo modprobe snd-seq
