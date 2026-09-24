@@ -133,6 +133,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libasound2-dev alsa-utils jackd
+    - name: Setup audio
+      uses: supriya-project/setup-audio@4bdbed1b96a1ff0c3346e74c746fa0d9a8fb387c # v1.0.0
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
