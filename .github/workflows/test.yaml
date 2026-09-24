@@ -147,14 +147,14 @@ jobs:
     - name: List wheels
       run: ls -l dist/
     - name: Install wheel
-      run: uv pip install ./dist/*cp314*
+      run: uv -v pip install ./dist/*cp314*
     - name: Install Linux deps
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install -y libasound2-dev alsa-utils jackd
     - name: Test
-      run: uv run pytest -v
+      run: uv -v run pytest -v
     strategy:
       fail-fast: false
       matrix:
