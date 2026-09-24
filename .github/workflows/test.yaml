@@ -152,8 +152,12 @@ jobs:
         path: dist
     - name: List wheels
       run: ls -l dist/
-    - name: Install wheel
+    - name: Install wheel (non-Windows)
+      if: runner.os != 'Windows'
       run: pip install ./dist/*cp314*
+    - name: Install wheel (Windows)
+      if: runner.os == 'Windows'
+      run: pip install dist\*cp314*
     - name: Install pytest
       run: pip install pytest pytest-cov
     - name: Test
