@@ -16,7 +16,7 @@ repos:
   rev: v0.15.9
   hooks:
   - id: ruff-check
-    name: ruff isort
+    name: ruff-isort
     types_or:  [python, pyi]
     args: [--select, "I,RUF022", --fix]
   - id: ruff-check
