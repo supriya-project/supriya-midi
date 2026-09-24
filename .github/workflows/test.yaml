@@ -128,6 +128,11 @@ jobs:
       contents: read
     runs-on: ${{ matrix.os }}
     steps:
+    - name: Install Linux deps
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libasound2-dev alsa-utils jackd
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         persist-credentials: false
@@ -148,13 +153,8 @@ jobs:
       run: ls -l dist/
     - name: Install wheel
       run: uv -v pip install ./dist/*cp314*
-    - name: Install Linux deps
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libasound2-dev alsa-utils jackd
     - name: Test
-      run: uv -v run pytest -v
+      run: uv -v run --no-sync pytest -v
     strategy:
       fail-fast: false
       matrix:
