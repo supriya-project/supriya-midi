@@ -141,7 +141,9 @@ jobs:
       with:
         python-version: "3.14"
     - name: Sync
-      run: uv sync
+      run: |
+        uv sync
+        uv -v run python -c "import supriya_midi; print(supriya_midi.__path__)"
     - name: Uninstall
       run: uv pip uninstall supriya-midi
     - name: Download wheels
