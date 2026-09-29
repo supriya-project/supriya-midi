@@ -7,7 +7,7 @@ from .conftest import OUT_CLIENT_NAME, OUT_PORT_NAME, TESTED_APIS
 
 @pytest.fixture(params=TESTED_APIS)
 def api(request) -> RtMidiAPI:
-    if (api := request.param) not in [RtMidiAPI.LINUX_ALSA]:
+    if (api := request.param) != RtMidiAPI.LINUX_ALSA:
         pytest.xfail(f"API {api} does not support setting port names.")
     return api
 
