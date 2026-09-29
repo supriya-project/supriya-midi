@@ -956,7 +956,6 @@ __all__ = [
     "ControllerChangeMessage",
     "MetaMessage",
     "MidiMessage",
-    "MidiMessage",
     "NoteOffMessage",
     "NoteOnMessage",
     "PitchWheelMessage",
