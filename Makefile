@@ -12,9 +12,6 @@ format:
 lint:
 	uv run ruff check docs/ src/ tests/
 
-pre-commit-install:
-	uv run pre-commit install
-
 stubgen:
 	 uv run python -m nanobind.stubgen --module supriya_midi.rtmidi_ext --marker-file src/supriya_midi/py.typed --output-file src/supriya_midi/rtmidi_ext.pyi
 	 uv run ruff format src/supriya_midi/rtmidi_ext.pyi
