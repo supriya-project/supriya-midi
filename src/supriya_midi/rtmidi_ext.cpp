@@ -1,5 +1,4 @@
 #include <memory>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -17,9 +16,9 @@ struct CallbackHandle {
     nb::object callback;
     nb::object data;
 
-    CallbackHandle(nb::handle callback, nb::handle data)
-        : callback(nb::borrow<nb::object>(callback)),
-          data(nb::borrow<nb::object>(data)) {}
+    CallbackHandle(nb::handle callback, nb::handle data) :
+        callback(nb::borrow<nb::object>(callback)),
+        data(nb::borrow<nb::object>(data)) {}
 };
 
 
@@ -134,19 +133,6 @@ NB_MODULE(rtmidi_ext, m) {
         .def("open_port", &RtMidi::openPort, nb::arg("port_number") = 0, nb::arg("port_name") = "RtMidi")
         .def("open_virtual_port", &RtMidi::openVirtualPort, nb::arg("port_name") = "RtMidi")
         .def("set_client_name", &RtMidi::setClientName, nb::arg("client_name"))
-        .def(
-            "set_error_callback",
-            [](RtMidi &self, nb::callable callback, nb::object data) {
-                if (auto* midi_in = dynamic_cast<PyRtMidiIn*>(&self)) {
-                    midi_in->set_error_callback(callback, data);
-                } else if (auto* midi_out = dynamic_cast<PyRtMidiOut*>(&self)) {
-                    midi_out->set_error_callback(callback, data);
-                } else {
-                    throw std::runtime_error("Unsupported RtMidi implementation");
-                }
-            },
-            nb::arg("callback"), nb::arg("data") = nb::none()
-        )
         .def("set_port_name", &RtMidi::setPortName, nb::arg("port_name"))
         ;
     nb::class_<PyRtMidiIn, RtMidi>(m, "RtMidiIn")
@@ -156,15 +142,13 @@ NB_MODULE(rtmidi_ext, m) {
         .def("get_message", [](PyRtMidiIn &self) { std::vector<unsigned char> message; double timeStamp = self.getMessage(&message); return std::make_tuple(message, timeStamp); })
         .def("ignore_types", &PyRtMidiIn::ignoreTypes, nb::arg("sysex") = true, nb::arg("timing") = true, nb::arg("active_sense") = true)
         .def("set_buffer_size", &PyRtMidiIn::setBufferSize, nb::arg("size") = 1024, nb::arg("count") = 4)
-        .def(
-            "set_callback",
-            &PyRtMidiIn::set_callback,
-            nb::arg("callback"), nb::arg("data") = nb::none()
-        );
+        .def("set_callback", &PyRtMidiIn::set_callback, nb::arg("callback"), nb::arg("data") = nb::none())
+        .def("set_error_callback", &PyRtMidiIn::set_error_callback, nb::arg("callback"), nb::arg("data") = nb::none())
         ;
     nb::class_<PyRtMidiOut, RtMidi>(m, "RtMidiOut")
         .def(nb::init<RtMidi::Api, const std::string&>(), nb::arg("api") = RtMidi::Api::UNSPECIFIED, nb::arg("client_name") = "RtMidi Output Client")
         .def("get_current_api", &PyRtMidiOut::getCurrentApi)
         .def("send_message", nb::overload_cast<const std::vector<unsigned char>*>(&PyRtMidiOut::sendMessage), nb::arg("message"))
+        .def("set_error_callback", &PyRtMidiOut::set_error_callback, nb::arg("callback"), nb::arg("data") = nb::none())
         ;
 }
