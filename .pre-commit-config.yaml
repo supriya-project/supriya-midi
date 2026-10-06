@@ -1,4 +1,28 @@
 repos:
+- repo: https://github.com/astral-sh/uv-pre-commit
+  rev: 0.12.23
+  hooks:
+  - id: uv-lock
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: v23.1.2
+  hooks:
+  - id: clang-format
+    args: [--style=WebKit]
+- repo: local
+  hooks:
+  - id: stubgen
+    entry: make stubgen
+    files: \.(cpp)$
+    language: system
+    name: stubgen
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.16.10 # Ruff version.
+  hooks:
+  - id: ruff-check
+    args: [--diff, --fix]
+    types_or: [python, pyi]
+  - id: ruff-format
+    types_or: [python, pyi]
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
   hooks:
@@ -10,15 +34,10 @@ repos:
   hooks:
   - id: zizmor
     args: [--no-progress, --fix]
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.16.9 # Ruff version.
+- repo: local
   hooks:
-  - id: ruff-check
-    args: [--fix]
-    types_or: [python, pyi]
-  - id: ruff-format
-    types_or: [python, pyi]
-- repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.12.20
-  hooks:
-  - id: uv-lock
+  - id: ty
+    entry: make ty
+    files: \.(py|pyi)$
+    language: system
+    name: ty
