@@ -21,6 +21,7 @@ exclude_patterns = []
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
+    "sphinx_copybutton",
     "sphinx_immaterial",
 ]
 templates_path = ["_templates"]
@@ -73,7 +74,18 @@ html_theme_options = {
 }
 html_title = "Supriya MIDI"
 object_description_options = [
-    ("py:.*", dict(include_fields_in_toc=False)),  # Hide "Parameters" in TOC
+    ("py:.*", {"include_fields_in_toc": False}),  # Hide "Parameters" in TOC
     ("py:exception", {"toc_icon_class": "data", "toc_icon_text": "X"}),
-    ("py:parameter", dict(include_in_toc=False)),  # Hide "p" parameter entries in TOC
+    ("py:parameter", {"include_in_toc": False}),  # Hide "p" parameter entries in TOC
 ]
+
+### COPYBUTTON
+
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
+
+
+def setup(app):
+    # Ensure a dummy DOCUMENTATION_OPTIONS variable is present so that
+    # sphinx-copybutton's copybutton.js doesn't crash.
+    app.add_js_file(None, body="window.DOCUMENTATION_OPTIONS = {}", priority=0)

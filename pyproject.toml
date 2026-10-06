@@ -4,7 +4,7 @@ requires = ["scikit-build-core >= 0.12", "nanobind >= 2.12"]
 
 [project]
 name = "supriya-midi"
-version = "26.5b0"
+version = "26.9b0"
 description = "Python  RTMidi Bindings"
 readme = "README.md"
 requires-python = ">= 3.10"
@@ -19,6 +19,8 @@ dev = [
     "pytest>=9.0.2",
     "pytest-cov>=7.1.0",
     "ruff>=0.15.7",
+    "scikit-build-core>=1.0.3",
+    "sphinx-copybutton>=0.5.2",
     "sphinx-immaterial>=0.13.9",
     "ty>=0.0.24",
 ]
@@ -31,6 +33,7 @@ test-command = "pytest -v -m ci {package}/tests/"
 before-all = [
     "yum install -y alsa-lib-devel alsa-utils jack-audio-connection-kit-devel",
 ]
+repair-wheel-command = "auditwheel repair --exclude libasound.so.2 --lib-sdir . -w {dest_dir} {wheel}"
 
 [[tool.cibuildwheel.overrides]]
 select = "*-musllinux*"
@@ -56,7 +59,18 @@ addopts = [
 markers = ["ci: mark test for use in cibuildwheel"]
 testpaths = ["tests/"]
 
+[tool.ruff]
+# always the oldest python version supriya supports
+target-version = "py310"
+
+[tool.ruff.lint]
+preview = true
+
 [tool.scikit-build]
+build-dir = "build"
 sdist.include = ["ext/"]
 wheel.exclude = ["*.cpp"]
 wheel.packages = ["src/supriya_midi"]
+
+[tool.uv]
+no-build-isolation-package = ["supriya_midi"]

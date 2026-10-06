@@ -5,7 +5,8 @@ These are higher-level wrappers around the low-level Python bindings, and have
 more guard-rails.
 """
 
-from typing import Any, Callable, Generic, Iterable, TypeAlias, TypeVar
+from collections.abc import Callable, Iterable
+from typing import Any, Generic, TypeAlias, TypeVar
 
 from typing_extensions import Self
 
@@ -140,7 +141,7 @@ class MidiBase(Generic[R]):
         """
         return self
 
-    def __exit__(self, *exc_info: Any) -> None:
+    def __exit__(self, *exc_info: object) -> None:
         """
         Support the context manager protocol.
 
@@ -397,7 +398,7 @@ class MidiIn(MidiBase[RtMidiIn]):
         """
         return self._rt_midi.get_current_api()
 
-    def get_message(self) -> tuple[list[int], float]:
+    def get_message(self) -> tuple[list[int], float] | None:
         """
         Poll for MIDI messages.
 
@@ -405,7 +406,9 @@ class MidiIn(MidiBase[RtMidiIn]):
             Pair of the MIDI message and delta timestamp, or ``None`` if no
             message available
         """
-        return self._rt_midi.get_message()
+        if not (data := self._rt_midi.get_message())[0]:
+            return
+        return data
 
     def ignore_types(
         self, sysex: bool = True, timing: bool = True, active_sense: bool = True

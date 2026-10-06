@@ -18,14 +18,26 @@ from .core import (
     list_ports,
 )
 from .messages import (
+    ActiveSenseMessage,
     AftertouchMessage,
     ChannelPressureMessage,
+    ClockMessage,
+    ContinueMessage,
     ControllerChangeMessage,
+    MetaMessage,
     MidiMessage,
     NoteOffMessage,
     NoteOnMessage,
     PitchWheelMessage,
     ProgramChangeMessage,
+    QuarterFrameMessage,
+    ResetMessage,
+    SongPositionMessage,
+    SongRequestMessage,
+    StartMessage,
+    StopMessage,
+    SystemExclusiveMessage,
+    TuneRequestMessage,
 )
 from .rtmidi_ext import RtMidiAPI, RtMidiErrorType
 
