@@ -35,8 +35,6 @@ jobs:
       run: uv sync
     - name: Run pre-commit
       uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
-    - name: Type check
-      run: uv run ty check src/ tests/
 
   # N.B. /dev/snd/seq isn't available on the Ubuntu runner and I haven't
   # succeeded in spinning up a nested Multipass VM so we'll just test OSX and

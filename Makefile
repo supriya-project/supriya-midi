@@ -12,16 +12,13 @@ format:
 lint:
 	uv run ruff check docs/ src/ tests/
 
-pre-commit-autoupdate:
-	uv run pre-commit autoupdate --repo https://github.com/astral-sh/ruff-pre-commit
-	uv run pre-commit autoupdate --repo https://github.com/astral-sh/uv-pre-commit
-	uv run pre-commit autoupdate --repo https://github.com/pre-commit/pre-commit-hooks
-
 pre-commit-install:
 	uv run pre-commit install
 
 stubgen:
-	 uv run python -m nanobind.stubgen --module supriya_midi.rtmidi_ext --marker-file src/supriya_midi/py.typed --output-dir src/supriya_midi
+	 uv run python -m nanobind.stubgen --module supriya_midi.rtmidi_ext --marker-file src/supriya_midi/py.typed --output-file src/supriya_midi/rtmidi_ext.pyi
+	 uv run ruff format src/supriya_midi/rtmidi_ext.pyi
+	 uv run ruff check --fix src/supriya_midi/rtmidi_ext.pyi
 
 ty:
 	uv run ty check src/ tests/
