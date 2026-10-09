@@ -8,9 +8,7 @@ message dataclasses back into raw integers for sending.
 
 import dataclasses
 from collections.abc import Sequence
-from typing import ClassVar
-
-from typing_extensions import Self
+from typing import ClassVar, Self
 
 from .constants import MetaMessageType, MidiMessageType
 
