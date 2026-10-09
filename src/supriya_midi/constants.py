@@ -1,7 +1,5 @@
 from enum import IntEnum
-from typing import SupportsInt
-
-from typing_extensions import Self
+from typing import Self, SupportsInt
 
 
 class MidiMessageType(IntEnum):

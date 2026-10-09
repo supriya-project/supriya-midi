@@ -7,7 +7,7 @@ name = "supriya-midi"
 version = "26.10b1"
 description = "Python  RTMidi Bindings"
 readme = "README.md"
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 dependencies = [
     "typing-extensions>=4.15.0",
 ]
@@ -61,7 +61,7 @@ testpaths = ["tests/"]
 
 [tool.ruff]
 # always the oldest python version supriya supports
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 preview = true

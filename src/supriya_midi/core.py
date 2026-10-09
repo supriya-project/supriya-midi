@@ -6,9 +6,7 @@ more guard-rails.
 """
 
 from collections.abc import Callable, Iterable
-from typing import Any, Generic, TypeAlias, TypeVar
-
-from typing_extensions import Self
+from typing import Any, Generic, Self, TypeAlias, TypeVar
 
 from .rtmidi_ext import RtMidi, RtMidiAPI, RtMidiErrorType, RtMidiIn, RtMidiOut
 
