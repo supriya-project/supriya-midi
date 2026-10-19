@@ -23,7 +23,7 @@ jobs:
         submodules: recursive
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Sync
       run: uv sync
     - name: Build docs
@@ -44,7 +44,7 @@ jobs:
         submodules: recursive
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Install supriya-midi
       run: uv sync
     - name: Build sdist
@@ -78,14 +78,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - {os: macos-15,         arch: x86_64, build: "cp3{11,12,13,14}-*",          dist: macos-amd}
-        - {os: macos-15,         arch: arm64,  build: "cp3{11,12,13,14}-*",          dist: macos-arm}
-        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14}-manylinux*", dist: manylinux-amd}
-        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14}-musllinux*", dist: musllinux-amd}
-        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14}-manylinux*", dist: manylinux-arm}
-        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14}-musllinux*", dist: musllinux-arm}
-        - {os: windows-latest,   arch: AMD64,  build: "cp3{11,12,13,14}-*",          dist: windows-amd}
-        - {os: windows-11-arm,   arch: ARM64,  build: "cp3{11,12,13,14}-*",          dist: windows-arm}
+        - {os: macos-15,         arch: x86_64, build: "cp3{11,12,13,14,15}-*",          dist: macos-amd}
+        - {os: macos-15,         arch: arm64,  build: "cp3{11,12,13,14,15}-*",          dist: macos-arm}
+        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14,15}-manylinux*", dist: manylinux-amd}
+        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14,15}-musllinux*", dist: musllinux-amd}
+        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14,15}-manylinux*", dist: manylinux-arm}
+        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14,15}-musllinux*", dist: musllinux-arm}
+        - {os: windows-latest,   arch: AMD64,  build: "cp3{11,12,13,14,15}-*",          dist: windows-amd}
+        - {os: windows-11-arm,   arch: ARM64,  build: "cp3{11,12,13,14,15}-*",          dist: windows-arm}
 
   upload-to-testpypi:
     name: Publish release to Test PyPI

@@ -30,7 +30,7 @@ jobs:
         submodules: recursive
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Install supriya-midi
       run: uv sync
     - name: Run prek
@@ -54,7 +54,7 @@ jobs:
         submodules: recursive
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Sync
       run: uv sync
     - name: Install
@@ -78,7 +78,7 @@ jobs:
         submodules: recursive
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Sync
       run: uv sync
     - name: Build docs
@@ -96,7 +96,7 @@ jobs:
         submodules: recursive
     - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Install supriya-midi
       run: uv sync
     - name: Build sdist
@@ -130,14 +130,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - {os: macos-26,         arch: x86_64, build: "cp3{11,12,13,14}-*",          dist: macos-amd}
-        - {os: macos-26,         arch: arm64,  build: "cp3{11,12,13,14}-*",          dist: macos-arm}
-        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14}-manylinux*", dist: manylinux-amd}
-        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14}-musllinux*", dist: musllinux-amd}
-        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14}-manylinux*", dist: manylinux-arm}
-        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14}-musllinux*", dist: musllinux-arm}
-        - {os: windows-latest,   arch: AMD64,  build: "cp3{11,12,13,14}-*",          dist: windows-amd}
-        - {os: windows-11-arm,   arch: ARM64,  build: "cp3{11,12,13,14}-*",          dist: windows-arm}
+        - {os: macos-26,         arch: x86_64, build: "cp3{11,12,13,14,15}-*",          dist: macos-amd}
+        - {os: macos-26,         arch: arm64,  build: "cp3{11,12,13,14,15}-*",          dist: macos-arm}
+        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14,15}-manylinux*", dist: manylinux-amd}
+        - {os: ubuntu-24.04,     arch: auto,   build: "cp3{11,12,13,14,15}-musllinux*", dist: musllinux-amd}
+        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14,15}-manylinux*", dist: manylinux-arm}
+        - {os: ubuntu-24.04-arm, arch: auto,   build: "cp3{11,12,13,14,15}-musllinux*", dist: musllinux-arm}
+        - {os: windows-latest,   arch: AMD64,  build: "cp3{11,12,13,14,15}-*",          dist: windows-amd}
+        - {os: windows-11-arm,   arch: ARM64,  build: "cp3{11,12,13,14,15}-*",          dist: windows-arm}
 
   test-wheels:
     name: Test wheels
@@ -152,7 +152,7 @@ jobs:
         submodules: recursive
     - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
-        python-version: "3.14"
+        python-version: "3.15"
     - name: Download wheels
       uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
       with:
