@@ -78,4 +78,4 @@ def test_get_compiled_api_by_name(name: str, expected_api: RtMidiAPI) -> None:
 
 
 def test_get_rtmidi_version() -> None:
-    assert get_rtmidi_version() == "6.0.0"
+    assert get_rtmidi_version() == "6.1.0"
