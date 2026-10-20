@@ -1,5 +1,6 @@
 #include <memory>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include <nanobind/nanobind.h>
@@ -112,6 +113,7 @@ NB_MODULE(rtmidi_ext, m)
 
             Please use the higher-level classes defined in :py:mod:`supriya_midi.core` instead.
     )pbdoc";
+
     nb::enum_<RtMidi::Api>(m, "RtMidiAPI", nb::is_arithmetic())
         .value("UNSPECIFIED", RtMidi::UNSPECIFIED)
         .value("MACOSX_CORE", RtMidi::MACOSX_CORE)
@@ -120,6 +122,7 @@ NB_MODULE(rtmidi_ext, m)
         .value("WINDOWS_MM", RtMidi::WINDOWS_MM)
         .value("WEB_MIDI", RtMidi::WEB_MIDI_API)
         .value("RTMIDI_DUMMY", RtMidi::RTMIDI_DUMMY);
+
     nb::enum_<RtMidiError::Type>(m, "RtMidiErrorType")
         .value("WARNING", RtMidiError::WARNING)
         .value("DEBUG_WARNING", RtMidiError::DEBUG_WARNING)
@@ -132,26 +135,28 @@ NB_MODULE(rtmidi_ext, m)
         .value("DRIVER_ERROR", RtMidiError::DRIVER_ERROR)
         .value("SYSTEM_ERROR", RtMidiError::SYSTEM_ERROR)
         .value("THREAD_ERROR", RtMidiError::THREAD_ERROR);
+
     nb::class_<RtMidi>(m, "RtMidi")
-        .def_static("get_api_display_name", &RtMidi::getApiDisplayName,
-            nb::arg("api"))
+        .def_static("check_api_availability", [](RtMidi::Api api) {
+                RtMidi::RtMidiApiAvailability availability = RtMidi::checkApiAvailability(api);
+                return std::make_tuple(
+                    availability.available,
+                    availability.message,
+                    availability.installUrl
+                ); }, nb::arg("api"))
+        .def_static("get_api_display_name", &RtMidi::getApiDisplayName, nb::arg("api"))
         .def_static("get_api_name", &RtMidi::getApiName, nb::arg("api"))
-        .def_static("get_compiled_api",
-            []() {
+        .def_static("get_compiled_api", []() {
                 std::vector<RtMidi::Api> apis;
                 RtMidi::getCompiledApi(apis);
-                return apis;
-            })
-        .def_static("get_compiled_api_by_name", &RtMidi::getCompiledApiByName,
-            nb::arg("name"))
+                return apis; })
+        .def_static("get_compiled_api_by_name", &RtMidi::getCompiledApiByName, nb::arg("name"))
         .def_static("get_version", &RtMidi::getVersion)
         .def("close_port", &RtMidi::closePort)
         .def("get_port_count", &RtMidi::getPortCount)
         .def("get_port_name", &RtMidi::getPortName, nb::arg("port_number") = 0)
-        .def("open_port", &RtMidi::openPort, nb::arg("port_number") = 0,
-            nb::arg("port_name") = "RtMidi")
-        .def("open_virtual_port", &RtMidi::openVirtualPort,
-            nb::arg("port_name") = "RtMidi")
+        .def("open_port", &RtMidi::openPort, nb::arg("port_number") = 0, nb::arg("port_name") = "RtMidi")
+        .def("open_virtual_port", &RtMidi::openVirtualPort, nb::arg("port_name") = "RtMidi")
         .def("set_client_name", &RtMidi::setClientName, nb::arg("client_name"))
         .def("set_error_callback", [](RtMidi& self, nb::callable callback, nb::object data) {
                 if (auto* midi_in = dynamic_cast<PyRtMidiIn*>(&self)) {
@@ -160,6 +165,7 @@ NB_MODULE(rtmidi_ext, m)
                     midi_out->set_error_callback(callback, data);
                 } }, nb::arg("callback"), nb::arg("data") = nb::none())
         .def("set_port_name", &RtMidi::setPortName, nb::arg("port_name"));
+
     nb::class_<PyRtMidiIn, RtMidi>(m, "RtMidiIn")
         .def(nb::init<RtMidi::Api, const std::string&, unsigned int>(),
             nb::arg("api") = RtMidi::Api::UNSPECIFIED,
@@ -179,6 +185,7 @@ NB_MODULE(rtmidi_ext, m)
             nb::arg("size") = 1024, nb::arg("count") = 4)
         .def("set_callback", &PyRtMidiIn::set_callback, nb::arg("callback"),
             nb::arg("data") = nb::none());
+
     nb::class_<PyRtMidiOut, RtMidi>(m, "RtMidiOut")
         .def(nb::init<RtMidi::Api, const std::string&>(),
             nb::arg("api") = RtMidi::Api::UNSPECIFIED,
