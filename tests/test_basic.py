@@ -5,6 +5,7 @@ import pytest
 
 from supriya_midi import (
     RtMidiAPI,
+    check_api_availability,
     get_api_display_name,
     get_api_name,
     get_compiled_api_by_name,
@@ -13,6 +14,16 @@ from supriya_midi import (
 )
 
 pytestmark = pytest.mark.ci
+
+
+@pytest.mark.parametrize(
+    "api, result",
+    [
+        (RtMidiAPI.RTMIDI_DUMMY, (True, "", "")),
+    ],
+)
+def test_check_api_availability(api: RtMidiAPI, result: tuple[bool, str, str]) -> None:
+    assert check_api_availability(api) == result
 
 
 @pytest.mark.parametrize(

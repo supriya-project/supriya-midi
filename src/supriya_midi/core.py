@@ -32,6 +32,22 @@ def _default_error_callback(
     raise RtMidiError(error_text, error_type=error_type)
 
 
+def check_api_availability(api: RtMidiAPI) -> tuple[bool, str, str]:
+    """
+    Check for API availability.
+
+    Args:
+        api: The backend API to check
+
+    Returns:
+        A triple of:
+            available: True when the API runtime is ready to use
+            message: Human-readable reason if not available.
+            install_url: Installer download URL when a runtime is missing
+    """
+    return RtMidi.check_api_availability(api)
+
+
 def get_api_display_name(api: RtMidiAPI) -> str:
     """
     Get the display name of a backend API.
