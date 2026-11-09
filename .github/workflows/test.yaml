@@ -28,13 +28,13 @@ jobs:
       with:
         persist-credentials: false
         submodules: recursive
-    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: "3.15"
     - name: Install supriya-midi
       run: uv sync
     - name: Run prek
-      uses: j178/prek-action@af4d4fcb6922b8e6f65c0426947125fcc38794ce # v3.0.2
+      uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
 
   # N.B. /dev/snd/seq isn't available on the Ubuntu runner and I haven't
   # succeeded in spinning up a nested Multipass VM so we'll just test OSX and
@@ -52,7 +52,7 @@ jobs:
       with:
         persist-credentials: false
         submodules: recursive
-    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: "3.15"
     - name: Sync
@@ -76,7 +76,7 @@ jobs:
       with:
         persist-credentials: false
         submodules: recursive
-    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: "3.15"
     - name: Sync
@@ -94,7 +94,7 @@ jobs:
       with:
         persist-credentials: false
         submodules: recursive
-    - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+    - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         python-version: "3.15"
     - name: Install supriya-midi
@@ -120,7 +120,7 @@ jobs:
       env:
         CIBW_ARCHS: ${{ matrix.arch }}
         CIBW_BUILD: ${{ matrix.build }}
-      uses: pypa/cibuildwheel@b3395e271a35f73dad77f21802abe9b986dfe299 # v4.3.1
+      uses: pypa/cibuildwheel@f9b966cfadf4109556cadc5bb39ddb72d0ce664e # v4.3.5
     - name: Upload wheels
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
@@ -150,7 +150,7 @@ jobs:
       with:
         persist-credentials: false
         submodules: recursive
-    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
       with:
         python-version: "3.15"
     - name: Download wheels
