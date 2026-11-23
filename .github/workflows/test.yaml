@@ -34,7 +34,7 @@ jobs:
     - name: Install supriya-midi
       run: uv sync
     - name: Run prek
-      uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
+      uses: j178/prek-action@7b101f8338a08d2bd6fdb3625e4e7692428763a3 # v3.1.1
 
   # N.B. /dev/snd/seq isn't available on the Ubuntu runner and I haven't
   # succeeded in spinning up a nested Multipass VM so we'll just test OSX and
